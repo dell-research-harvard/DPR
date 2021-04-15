@@ -103,6 +103,27 @@ class CsvQASrc(QASrc):
         self.data = data
 
 
+class CustomQASrc(QASrc):
+    def __init__(
+        self,
+        question: int,
+        answer: int,
+        id: int,
+    ):
+        self.data = None
+        self.selector = hydra.utils.instantiate(selector) if selector else None
+        self.special_query_token = None
+        self.query_special_suffix = None
+        self.question = question
+        self.answer = tuple(answer)
+        self.id = id
+
+    def load_data(self):
+        data = []
+        data.append(QASample(self._process_question(self.question), self.id, self.answer))
+        self.data = data
+
+
 class JsonlQASrc(QASrc):
     def __init__(
         self,
@@ -245,6 +266,38 @@ class CsvCtxSrc(RetrieverData):
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
         super().load_data()
         with open(self.file) as ifile:
+            reader = csv.reader(ifile, delimiter="\t")
+            for row in reader:
+                if row[self.id_col] == "id":
+                    continue
+                if self.id_prefix:
+                    sample_id = self.id_prefix + str(row[self.id_col])
+                else:
+                    sample_id = row[self.id_col]
+                passage = row[self.text_col]
+                if self.normalize:
+                    passage = normalize_passage(passage)
+                ctxs[sample_id] = BiEncoderPassage(passage, row[self.title_col])
+
+
+class CustomCsvCtxSrc(RetrieverData):
+    def __init__(
+        self,
+        file_path: str,
+        id_col: int = 0,
+        text_col: int = 1,
+        title_col: int = 2,
+        id_prefix: str = None,
+        normalize: bool = False,
+    ):
+        self.text_col = text_col
+        self.title_col = title_col
+        self.id_col = id_col
+        self.id_prefix = id_prefix
+        self.normalize = normalize
+
+    def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
+        with open(self.file_path) as ifile:
             reader = csv.reader(ifile, delimiter="\t")
             for row in reader:
                 if row[self.id_col] == "id":
