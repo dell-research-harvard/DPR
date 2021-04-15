@@ -115,7 +115,7 @@ class CustomQASrc(QASrc):
         self.special_query_token = None
         self.query_special_suffix = None
         self.question = question
-        self.answer = tuple(answer)
+        self.answer = tuple([answer])
         self.id = id
 
     def load_data(self):
