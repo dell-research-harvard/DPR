@@ -111,7 +111,7 @@ class CustomQASrc(QASrc):
         id: int,
     ):
         self.data = None
-        self.selector = hydra.utils.instantiate(selector) if selector else None
+        self.selector = None
         self.special_query_token = None
         self.query_special_suffix = None
         self.question = question
