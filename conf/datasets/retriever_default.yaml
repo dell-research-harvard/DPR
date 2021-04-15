@@ -28,3 +28,4 @@ custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
   question: what was the prison called in the green mile
   answer: Cold Mountain Penitentiary
+  id: 0
