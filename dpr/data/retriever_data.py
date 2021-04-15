@@ -295,6 +295,7 @@ class CustomCsvCtxSrc(RetrieverData):
         self.id_col = id_col
         self.id_prefix = id_prefix
         self.normalize = normalize
+        self.file_path = file_path
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
         with open(self.file_path) as ifile:
