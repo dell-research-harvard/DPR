@@ -340,9 +340,9 @@ class NewspaperArchiveCtxSrc(RetrieverData):
 
             for gen in ocr_text_generators:
                 for layobj in gen:
-                    title, ocr_text, object_id = layobj
+                    title, passage, object_id = layobj
                     if self.normalize:
-                        passage = normalize_passage(ocr_text)
+                        passage = normalize_passage(passage)
                     ctxs[object_id] = BiEncoderPassage(passage[:self.passage_char_max], title)
 
 
