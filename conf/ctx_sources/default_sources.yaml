@@ -9,3 +9,8 @@ dpr_wiki_by_path:
   _target_: dpr.data.retriever_data.CustomCsvCtxSrc
   file_path: /mnt/data01/dpr_data/downloads/data/wikipedia_split/psgs_w100.tsv
   id_prefix: 'wiki:'
+
+newspaper_archive:
+  _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc
+  path_pattern: /mnt/data01/all1929_size50_marchManifest/**/ocr_*
+  passage_char_max: 100

@@ -9,6 +9,8 @@ import hydra
 import jsonlines
 import torch
 from omegaconf import DictConfig
+import ijson
+import glob
 
 from dpr.data.biencoder_data import (
     BiEncoderPassage,
@@ -311,6 +313,37 @@ class CustomCsvCtxSrc(RetrieverData):
                 if self.normalize:
                     passage = normalize_passage(passage)
                 ctxs[sample_id] = BiEncoderPassage(passage, row[self.title_col])
+
+
+class NewspaperArchiveCtxSrc(RetrieverData):
+    def __init__(
+        self,
+        path_pattern: str,
+        passage_char_max: int,
+        id_prefix: str = None,
+        normalize: bool = False,
+    ):
+        self.id_prefix = id_prefix
+        self.normalize = normalize
+        self.file_paths = glob.glob(path_pattern)
+        self.passage_char_max = passage_char_max
+
+    def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
+        for file_path in self.file_paths:
+            with open(file_path, 'rb') as f:
+                items = ijson.kvitems(f, '')
+                ocr_text_generators = [
+                    ((ik['image_file_name'], ik['ocr_text'], ik['object_id']) 
+                        for ik in v if ik['label']=='article')
+                    for k, v in items
+                ]
+
+            for gen in ocr_text_generators:
+                for layobj in gen:
+                    title, ocr_text, object_id = layobj
+                    if self.normalize:
+                        passage = normalize_passage(ocr_text)
+                    ctxs[object_id] = BiEncoderPassage(passage[:self.passage_char_max], title)
 
 
 class KiltCsvCtxSrc(CsvCtxSrc):
