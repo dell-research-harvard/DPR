@@ -2,7 +2,7 @@
 # configuration groups
 defaults:
   - encoder: hf_bert
-  - train: biencoder_default
+  - train: biencoder_mnli
   - datasets: encoder_train_default
 
 train_datasets:
@@ -30,7 +30,7 @@ device:
 distributed_world_size:
 distributed_port:
 no_cuda: False
-n_gpu:
+n_gpu: 2
 fp16: False
 
 # For fp16: Apex AMP optimization level selected in ['O0', 'O1', 'O2', and 'O3']."

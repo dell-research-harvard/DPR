@@ -27,3 +27,7 @@ squad1_train:
 squad1_dev:
   _target_: dpr.data.biencoder_data.JsonQADataset
   file: data.retriever.squad1-dev
+
+custom_train:
+  _target_: dpr.data.biencoder_data.CustomJsonQADataset
+  file_path: /mnt/data01/mnli_for_dpr.json
