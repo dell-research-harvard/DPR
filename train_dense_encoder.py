@@ -76,7 +76,7 @@ class BiEncoderTrainer(object):
             set_cfg_params_from_state(saved_state.encoder_params, cfg)
 
         tensorizer, model, optimizer = init_biencoder_components(
-            cfg.encoder.encoder_model_type, cfg.encoder
+            cfg.encoder.encoder_model_type, cfg
         )
 
         model, optimizer = setup_for_distributed_mode(
