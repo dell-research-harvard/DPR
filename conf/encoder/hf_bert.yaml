@@ -7,7 +7,7 @@ encoder_model_type: fairseq_roberta
 pretrained_model_cfg: bert-base-uncased
 
 # Some encoders need to be initialized from a file
-pretrained_file: /mnt/data01/roberta
+pretrained_file: /mnt/data01/roberta/pretrained/fairseq/roberta-base/model.pt
 
 # Extra linear layer on top of standard bert/roberta encoder
 projection_dim: 0
