@@ -206,7 +206,7 @@ class HFBertEncoder(AutoModel):
             cfg.hidden_dropout_prob = dropout
 
         if pretrained:
-            return cls.from_pretrained(
+            return HFBertEncoder.from_pretrained(
                 cfg_name, config=cfg, **kwargs  # REMOVED: project_dim=projection_dim,
             )
         else:
