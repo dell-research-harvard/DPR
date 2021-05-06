@@ -207,7 +207,7 @@ class HFBertEncoder(AutoModel):
 
         if pretrained:
             return cls.from_pretrained(
-                cfg_name, project_dim=projection_dim, cfg, **kwargs 
+                cfg_name, cfg, project_dim=projection_dim **kwargs 
             )
         else:
             return HFBertEncoder(cfg, project_dim=projection_dim)
