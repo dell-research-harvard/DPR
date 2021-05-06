@@ -15,7 +15,7 @@ from typing import Tuple
 import torch
 from torch import Tensor as T
 from torch import nn
-from transformers.modeling_bert import BertConfig, BertModel
+# from transformers.modeling_bert import BertConfig, BertModel
 from transformers import AutoConfig, AutoModel, AutoTokenizer
 from transformers.optimization import AdamW
 from transformers.tokenization_bert import BertTokenizer
@@ -184,7 +184,7 @@ def get_roberta_tokenizer(pretrained_cfg_name: str, do_lower_case: bool = True):
 
 class HFBertEncoder(AutoModel):
     def __init__(self, config, project_dim: int = 0):
-        AutoModel.__init__(self, config)
+        RobertaModel.__init__(self, config)
         assert config.hidden_size > 0, "Encoder hidden_size can't be zero"
         self.encode_proj = (
             nn.Linear(config.hidden_size, project_dim) if project_dim != 0 else None
