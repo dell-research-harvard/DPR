@@ -199,18 +199,16 @@ class HFBertEncoder(AutoModel):
         dropout: float = 0.1,
         pretrained: bool = True,
         **kwargs
-    ):
+    ) -> HFBertEncoder:
         cfg = AutoConfig.from_pretrained(cfg_name if cfg_name else "bert-base-uncased")
         if dropout != 0:
             cfg.attention_probs_dropout_prob = dropout
             cfg.hidden_dropout_prob = dropout
 
         if pretrained:
-            mymodel = cls.from_pretrained(
-                cfg_name, config=cfg, **kwargs  # REMOVED: project_dim=projection_dim,
+            return cls.from_pretrained(
+                cfg_name, config=cfg, project_dim=projection_dim, **kwargs 
             )
-            print(type(mymodel))
-            return mymodel
         else:
             return HFBertEncoder(cfg, project_dim=projection_dim)
 
