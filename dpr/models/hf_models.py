@@ -184,7 +184,7 @@ def get_roberta_tokenizer(pretrained_cfg_name: str, do_lower_case: bool = True):
 
 class HFBertEncoder(AutoModel):
     def __init__(self, config, project_dim: int = 0):
-        super().__init__(self, config)
+        super().from_config(self, config)
         assert config.hidden_size > 0, "Encoder hidden_size can't be zero"
         self.encode_proj = (
             nn.Linear(config.hidden_size, project_dim) if project_dim != 0 else None
