@@ -210,7 +210,7 @@ class HFBertEncoder(AutoModel):
             mymodel = cls.from_pretrained(
                 cfg_name, config=cfg, project_dim=projection_dim, **kwargs 
             )
-            print(type(mymodel), file=sys.stderr)
+            logger.info(f"This is my model: {type(mymodel)}")
             return mymodel
         else:
             return HFBertEncoder(cfg, project_dim=projection_dim)
