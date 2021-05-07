@@ -211,7 +211,7 @@ def HFBertEncoderFactory(cfg_model_name):
 
             if pretrained:
                 return HFBertEncoder.from_pretrained(
-                    config=cfg, project_dim=projection_dim, **kwargs 
+                    cfg_name, config=cfg, project_dim=projection_dim, **kwargs 
                 )
             else:
                 return HFBertEncoder(cfg, project_dim=projection_dim)
