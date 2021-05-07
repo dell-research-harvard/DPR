@@ -11,6 +11,7 @@ Encoder model wrappers based on HuggingFace code
 
 import logging
 from typing import Tuple
+import sys
 
 import torch
 from torch import Tensor as T
@@ -209,7 +210,7 @@ class HFBertEncoder(AutoModel):
             mymodel = cls.from_pretrained(
                 cfg_name, config=cfg, project_dim=projection_dim, **kwargs 
             )
-            print(type(mymodel))
+            print(type(mymodel), file=sys.stderr)
             return mymodel
         else:
             return HFBertEncoder(cfg, project_dim=projection_dim)
