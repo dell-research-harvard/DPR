@@ -184,7 +184,7 @@ def get_roberta_tokenizer(pretrained_cfg_name: str, do_lower_case: bool = True):
 
 class HFBertEncoder(AutoModel):
     def __init__(self, config, project_dim: int = 0):
-        super().from_config(self, config)
+        AutoModel.__init__(self, config)
         assert config.hidden_size > 0, "Encoder hidden_size can't be zero"
         self.encode_proj = (
             nn.Linear(config.hidden_size, project_dim) if project_dim != 0 else None
@@ -206,9 +206,11 @@ class HFBertEncoder(AutoModel):
             cfg.hidden_dropout_prob = dropout
 
         if pretrained:
-            return cls.from_pretrained(
+            mymodel = cls.from_pretrained(
                 cfg_name, config=cfg, project_dim=projection_dim, **kwargs 
             )
+            print(type(mymodel))
+            return mymodel
         else:
             return HFBertEncoder(cfg, project_dim=projection_dim)
 
