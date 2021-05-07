@@ -210,8 +210,8 @@ def HFBertEncoderFactory(cfg_model_name):
                 cfg.hidden_dropout_prob = dropout
 
             if pretrained:
-                return cls.from_pretrained(
-                    cfg_name, config=cfg, project_dim=projection_dim, **kwargs 
+                return HFBertEncoder.from_pretrained(
+                    config=cfg, project_dim=projection_dim, **kwargs 
                 )
             else:
                 return HFBertEncoder(cfg, project_dim=projection_dim)
