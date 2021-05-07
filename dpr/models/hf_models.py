@@ -205,6 +205,7 @@ class HFBertEncoder(RobertaModel):
         if dropout != 0:
             cfg.attention_probs_dropout_prob = dropout
             cfg.hidden_dropout_prob = dropout
+            cfg.return_dict = False
 
         if pretrained:
             return cls.from_pretrained(
@@ -235,8 +236,6 @@ class HFBertEncoder(RobertaModel):
             )
 
         if isinstance(representation_token_pos, int):
-            print(type(sequence_output))
-            print(sequence_output)
             pooled_output = sequence_output[:, representation_token_pos, :]
         else:  # treat as a tensor
             bsz = sequence_output.size(0)
