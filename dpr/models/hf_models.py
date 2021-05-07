@@ -235,6 +235,8 @@ class HFBertEncoder(RobertaModel):
             )
 
         if isinstance(representation_token_pos, int):
+            print(type(sequence_output))
+            print(sequence_output)
             pooled_output = sequence_output[:, representation_token_pos, :]
         else:  # treat as a tensor
             bsz = sequence_output.size(0)
