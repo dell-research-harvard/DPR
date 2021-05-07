@@ -183,7 +183,7 @@ def get_roberta_tokenizer(pretrained_cfg_name: str, do_lower_case: bool = True):
     )
 
 
-class HFBertEncoder(RobertaModel):
+class HFBertEncoder(BertModel):
     def __init__(self, config, project_dim: int = 0):
         super().__init__(config)
         assert config.hidden_size > 0, "Encoder hidden_size can't be zero"
