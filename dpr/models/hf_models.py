@@ -17,7 +17,7 @@ import torch
 from torch import Tensor as T
 from torch import nn
 # from transformers.modeling_bert import BertConfig, BertModel
-from transformers import AutoConfig, AutoModel, BertConfig, BertModel, AutoTokenizer, BertTokenizer, RobertaTokenizer, PreTrainedModel
+from transformers import AutoConfig, AutoModel, BertConfig, BertModel, AutoTokenizer, BertTokenizer, RobertaTokenizer, RobertaModel
 from transformers.optimization import AdamW
 # from transformers.tokenization_bert import BertTokenizer
 # from transformers.tokenization_roberta import RobertaTokenizer
@@ -31,7 +31,6 @@ logger = logging.getLogger(__name__)
 
 def get_bert_biencoder_components(cfg, inference_only: bool = False, **kwargs):
     dropout = cfg.encoder.dropout if hasattr(cfg.encoder, "dropout") else 0.0
-    HFBertEncoder = HFBertEncoderFactory(cfg.encoder.pretrained_model_cfg)
     question_encoder = HFBertEncoder.init_encoder(
         cfg.encoder.pretrained_model_cfg,
         projection_dim=cfg.encoder.projection_dim,
@@ -184,85 +183,82 @@ def get_roberta_tokenizer(pretrained_cfg_name: str, do_lower_case: bool = True):
     )
 
 
-def HFBertEncoderFactory(cfg_model_name):
-    cfg_model = AutoModel.from_pretrained(cfg_model_name)
-    class HFBertEncoder(type(cfg_model)):
-        def __init__(self, config, project_dim: int = 0):
-            super().__init__(self, config)
-            assert config.hidden_size > 0, "Encoder hidden_size can't be zero"
-            self.encode_proj = (
-                nn.Linear(config.hidden_size, project_dim) if project_dim != 0 else None
+class HFBertEncoder(RobertaModel):
+    def __init__(self, config, project_dim: int = 0):
+        super().__init__(self, config)
+        assert config.hidden_size > 0, "Encoder hidden_size can't be zero"
+        self.encode_proj = (
+            nn.Linear(config.hidden_size, project_dim) if project_dim != 0 else None
+        )
+        self.init_weights()
+
+    @classmethod
+    def init_encoder(
+        cls,
+        cfg_name: str,
+        projection_dim: int = 0,
+        dropout: float = 0.1,
+        pretrained: bool = True,
+        **kwargs
+    ):
+        cfg = AutoConfig.from_pretrained(cfg_name if cfg_name else "bert-base-uncased")
+        if dropout != 0:
+            cfg.attention_probs_dropout_prob = dropout
+            cfg.hidden_dropout_prob = dropout
+
+        if pretrained:
+            return cls.from_pretrained(
+                cfg_name, config=cfg, project_dim=projection_dim, **kwargs 
             )
-            self.init_weights()
+        else:
+            return HFBertEncoder(cfg, project_dim=projection_dim)
 
-        @classmethod
-        def init_encoder(
-            cls,
-            cfg_name: str,
-            projection_dim: int = 0,
-            dropout: float = 0.1,
-            pretrained: bool = True,
-            **kwargs
-        ):
-            cfg = AutoConfig.from_pretrained(cfg_name if cfg_name else "bert-base-uncased")
-            if dropout != 0:
-                cfg.attention_probs_dropout_prob = dropout
-                cfg.hidden_dropout_prob = dropout
+    def forward(
+        self,
+        input_ids: T,
+        token_type_ids: T,
+        attention_mask: T,
+        representation_token_pos=0,
+    ) -> Tuple[T, ...]:
+        if self.config.output_hidden_states:
+            sequence_output, pooled_output, hidden_states = super().forward(
+                input_ids=input_ids,
+                token_type_ids=token_type_ids,
+                attention_mask=attention_mask,
+            )
+        else:
+            hidden_states = None
+            sequence_output, pooled_output = super().forward(
+                input_ids=input_ids,
+                token_type_ids=token_type_ids,
+                attention_mask=attention_mask,
+            )
 
-            if pretrained:
-                return HFBertEncoder.from_pretrained(
-                    cfg_name, config=cfg, project_dim=projection_dim, **kwargs 
-                )
-            else:
-                return HFBertEncoder(cfg, project_dim=projection_dim)
+        if isinstance(representation_token_pos, int):
+            pooled_output = sequence_output[:, representation_token_pos, :]
+        else:  # treat as a tensor
+            bsz = sequence_output.size(0)
+            assert (
+                representation_token_pos.size(0) == bsz
+            ), "query bsz={} while representation_token_pos bsz={}".format(
+                bsz, representation_token_pos.size(0)
+            )
+            pooled_output = torch.stack(
+                [
+                    sequence_output[i, representation_token_pos[i, 1], :]
+                    for i in range(bsz)
+                ]
+            )
 
-        def forward(
-            self,
-            input_ids: T,
-            token_type_ids: T,
-            attention_mask: T,
-            representation_token_pos=0,
-        ) -> Tuple[T, ...]:
-            if self.config.output_hidden_states:
-                sequence_output, pooled_output, hidden_states = super().forward(
-                    input_ids=input_ids,
-                    token_type_ids=token_type_ids,
-                    attention_mask=attention_mask,
-                )
-            else:
-                hidden_states = None
-                sequence_output, pooled_output = super().forward(
-                    input_ids=input_ids,
-                    token_type_ids=token_type_ids,
-                    attention_mask=attention_mask,
-                )
+        if self.encode_proj:
+            pooled_output = self.encode_proj(pooled_output)
+        return sequence_output, pooled_output, hidden_states
 
-            if isinstance(representation_token_pos, int):
-                pooled_output = sequence_output[:, representation_token_pos, :]
-            else:  # treat as a tensor
-                bsz = sequence_output.size(0)
-                assert (
-                    representation_token_pos.size(0) == bsz
-                ), "query bsz={} while representation_token_pos bsz={}".format(
-                    bsz, representation_token_pos.size(0)
-                )
-                pooled_output = torch.stack(
-                    [
-                        sequence_output[i, representation_token_pos[i, 1], :]
-                        for i in range(bsz)
-                    ]
-                )
+    def get_out_size(self):
+        if self.encode_proj:
+            return self.encode_proj.out_features
+        return self.config.hidden_size
 
-            if self.encode_proj:
-                pooled_output = self.encode_proj(pooled_output)
-            return sequence_output, pooled_output, hidden_states
-
-        def get_out_size(self):
-            if self.encode_proj:
-                return self.encode_proj.out_features
-            return self.config.hidden_size
-
-    return HFBertEncoder
 
 class BertTensorizer(Tensorizer):
     def __init__(
