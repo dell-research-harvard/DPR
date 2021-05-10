@@ -17,5 +17,5 @@ newspaper_archive:
 
 mnli_dev_hypotheses:
   _target_: dpr.data.retriever_data.JsonlCtxSrc
-  path_pattern: /mnt/data01/mnli_for_dpr_dev.jsonl
+  file: /mnt/data01/mnli_for_dpr_dev.jsonl
   passage_char_max: 500
