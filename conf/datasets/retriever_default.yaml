@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: who was herbert hoover
-  answer: U.S. President
+  question: yeah i know and i did that all through college and it worked too
+  answer: MNLI = no answer
   id: 0
