@@ -347,6 +347,30 @@ class NewspaperArchiveCtxSrc(RetrieverData):
                     ctxs[uid] = BiEncoderPassage(passage[:self.passage_char_max], title)
 
 
+class JsonlCtxSrc(RetrieverData):
+    def __init__(
+        self,
+        file: str,
+        passage_char_max: int,
+        id_prefix: str = None,
+        normalize: bool = False,
+    ):
+        self.id_prefix = id_prefix
+        self.normalize = normalize
+        self.file = file
+        self.passage_char_max = passage_char_max
+
+    def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
+        with jsonlines.open(self.file, mode="r") as jsonl_reader:
+            for jline in jsonl_reader:
+                for k in ['positive_ctxs', 'negative_ctxs', 'hard_negative_ctxs']:
+                    uid = jline[k][0]['title']
+                    passage = jline[k][0]['text']
+                    if self.normalize:
+                        passage = normalize_passage(passage)  
+                    ctxs[uid] = BiEncoderPassage(passage[:self.passage_char_max], uid)
+
+
 class KiltCsvCtxSrc(CsvCtxSrc):
     def __init__(
         self,
