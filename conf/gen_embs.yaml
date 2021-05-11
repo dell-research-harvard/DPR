@@ -9,7 +9,7 @@ model_file:
 ctx_src:
 
 # which (ctx or query) encoder to be used for embedding generation
-encoder_type: ctx
+encoder_type: query
 
 # output .tsv file path to write results to
 out_file:

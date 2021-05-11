@@ -15,7 +15,7 @@ newspaper_archive:
   path_pattern: /mnt/data01/all1929_size50_marchManifest/**/ocr_*
   passage_char_max: 500
 
-mnli_dev_hypotheses:
+mnli_dev:
   _target_: dpr.data.retriever_data.MnliJsonlCtxSrc
   file: /mnt/data01/mnli_for_dpr_dev.jsonl
   passage_char_max: 500
