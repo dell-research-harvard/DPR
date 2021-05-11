@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: At the eastern end of Back Lane and turning right, Nicholas Street becomes Patrick Street, and in St. Patrick's Close is St. Patrick's Cathedral .
-  answer: MNLI = no answer
+  question: You have to keep your cash and charge it.
+  answer: No answer by design.
   id: 0
