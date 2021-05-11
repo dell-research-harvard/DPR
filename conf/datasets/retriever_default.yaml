@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: Local boy Gates wisely built his 45,000-square-foot castle in suburban Seattle.
+  question: At the eastern end of Back Lane and turning right, Nicholas Street becomes Patrick Street, and in St. Patrick's Close is St. Patrick's Cathedral .
   answer: MNLI = no answer
   id: 0
