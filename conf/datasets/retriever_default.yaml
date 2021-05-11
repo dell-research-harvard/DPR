@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: yeah i know and i did that all through college and it worked too
+  question: Local boy Gates wisely built his 45,000-square-foot castle in suburban Seattle.
   answer: MNLI = no answer
   id: 0
