@@ -25,3 +25,4 @@ hf_datasets:
   _target_: dpr.data.retriever_data.HFDatasetsCtxSrc
   dataset: ag_news
   split: test
+  passage_char_max: 500
