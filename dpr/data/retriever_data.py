@@ -402,7 +402,7 @@ class HFDatasetsCtxSrc(RetrieverData):
         from datasets import load_dataset
         hfdataset = load_dataset(self.dataset, split=self.split)
 
-        for idx, spl in hfdataset:
+        for idx, spl in enumerate(hfdataset):
             uid = str(idx) + '-class' + str(spl['label'])
             passage = spl['text']
             if self.normalize:
