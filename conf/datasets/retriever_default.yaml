@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: You have to keep your cash and charge it.
+  question: This example is business.
   answer: No answer by design.
   id: 0
