@@ -382,6 +382,34 @@ class MnliJsonlCtxSrc(RetrieverData):
                     ctxs[uid] = BiEncoderPassage(passage[:self.passage_char_max], uid)
 
 
+class HFDatasetsCtxSrc(RetrieverData):
+    def __init__(
+        self,
+        dataset: str,
+        split: str,
+        passage_char_max: int,
+        id_prefix: str = None,
+        normalize: bool = False,
+    ):
+        self.id_prefix = id_prefix
+        self.normalize = normalize
+        self.dataset = dataset
+        self.split = split
+        self.passage_char_max = passage_char_max
+
+    def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
+
+        from datasets import load_dataset
+        hfdataset = load_dataset(self.dataset, split=self.split)
+
+        for idx, spl in hfdataset:
+            uid = str(idx) + '-class' + str(spl['label'])
+            passage = spl['text']
+            if self.normalize:
+                passage = normalize_passage(passage)  
+            ctxs[uid] = BiEncoderPassage(passage[:self.passage_char_max], uid)
+
+
 class KiltCsvCtxSrc(CsvCtxSrc):
     def __init__(
         self,
