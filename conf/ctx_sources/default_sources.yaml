@@ -12,7 +12,7 @@ dpr_wiki_by_path:
 
 newspaper_archive:
   _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc
-  path_pattern: /mnt/data01/all1929_size50_marchManifest/**/ocr_*
+  path_pattern: /mnt/data01/pipeline_egress/all1933_size50_marchManifest/**/ocr_*
   passage_char_max: 500
 
 mnli_dev:
