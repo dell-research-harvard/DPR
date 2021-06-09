@@ -30,7 +30,7 @@ device:
 distributed_world_size:
 distributed_port:
 no_cuda: False
-n_gpu: 2
+n_gpu:
 fp16: False
 
 # For fp16: Apex AMP optimization level selected in ['O0', 'O1', 'O2', and 'O3']."

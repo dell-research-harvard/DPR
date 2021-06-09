@@ -319,14 +319,12 @@ class NewspaperArchiveCtxSrc(RetrieverData):
     def __init__(
         self,
         path_pattern: str,
-        passage_char_max: int,
         id_prefix: str = None,
         normalize: bool = False,
     ):
         self.id_prefix = id_prefix
         self.normalize = normalize
         self.file_paths = glob.glob(path_pattern)
-        self.passage_char_max = passage_char_max
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
         for file_path in self.file_paths:
@@ -344,7 +342,7 @@ class NewspaperArchiveCtxSrc(RetrieverData):
                     uid = str(object_id) + '_' + title 
                     if self.normalize:
                         passage = normalize_passage(passage)
-                    ctxs[uid] = BiEncoderPassage(passage[:self.passage_char_max], title)
+                    ctxs[uid] = BiEncoderPassage(passage, title)
 
 
 class MnliJsonlCtxSrc(RetrieverData):
