@@ -319,12 +319,14 @@ class NewspaperArchiveCtxSrc(RetrieverData):
     def __init__(
         self,
         path_pattern: str,
+        layout_object: str = 'article',
         id_prefix: str = None,
         normalize: bool = False,
     ):
         self.id_prefix = id_prefix
         self.normalize = normalize
         self.file_paths = glob.glob(path_pattern)
+        self.layout_object = layout_object
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
         for file_path in self.file_paths:
@@ -332,7 +334,7 @@ class NewspaperArchiveCtxSrc(RetrieverData):
                 items = ijson.kvitems(f, '')
                 ocr_text_generators = [
                     ((ik['image_file_name'], ik['ocr_text'], ik['object_id']) 
-                        for ik in v if ik['label']=='article')
+                        for ik in v if ik['label']==self.layout_object)
                     for k, v in items
                 ]
 
@@ -342,6 +344,8 @@ class NewspaperArchiveCtxSrc(RetrieverData):
                     uid = str(object_id) + '_' + title 
                     if self.normalize:
                         passage = normalize_passage(passage)
+                        if self.layout_object == 'headline':
+                            passage = passage.lower()
                     ctxs[uid] = BiEncoderPassage(passage, title)
 
 

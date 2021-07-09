@@ -272,7 +272,11 @@ class CustomJsonQADataset(Dataset):
 
 
 def normalize_passage(ctx_text: str):
+    ctx_text = ctx_text.replace("-\n", "")
     ctx_text = ctx_text.replace("\n", " ").replace("’", "'")
+    ctx_text = ctx_text.encode('ascii', 'ignore').decode()
+    ctx_text = ctx_text.translate(str.maketrans('', '', r'"#$%&\()*+/:;<=>@[\\]^_`{|}~'))
+    ctx_text = ctx_text.strip()
     return ctx_text
 
 
