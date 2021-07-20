@@ -320,6 +320,7 @@ class NewspaperArchiveCtxSrc(RetrieverData):
         self,
         path_pattern: str,
         layout_object: str = 'article',
+        page_filter: int = None,
         id_prefix: str = None,
         normalize: bool = False,
     ):
@@ -327,16 +328,23 @@ class NewspaperArchiveCtxSrc(RetrieverData):
         self.normalize = normalize
         self.file_paths = glob.glob(path_pattern)
         self.layout_object = layout_object
+        self.page_filter = page_filter
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
         for file_path in self.file_paths:
             with open(file_path, 'rb') as f:
                 items = ijson.kvitems(f, '')
+
+                ocr_text_generators = []
+                for k, v in items:
+                    ocr_text_generators.append(self.ocr_text_iter(v))
+                """
                 ocr_text_generators = [
                     ((ik['image_file_name'], ik['ocr_text'], ik['object_id']) 
                         for ik in v if ik['label']==self.layout_object)
                     for k, v in items
                 ]
+                """
 
             for gen in ocr_text_generators:
                 for layobj in gen:
@@ -347,6 +355,15 @@ class NewspaperArchiveCtxSrc(RetrieverData):
                         if self.layout_object == 'headline':
                             passage = passage.lower()
                     ctxs[uid] = BiEncoderPassage(passage, title)
+
+    def ocr_text_iter(self, v):
+        for ik in v:
+            if ik['label'] == self.layout_object:
+                if self.page_filter:
+                    if not ik['image_file_name'].split('.')[0].endswith(f'p-{self.page_filter}'):
+                        yield (ik['image_file_name'], ik['ocr_text'], ik['object_id'])
+                else:
+                    yield (ik['image_file_name'], ik['ocr_text'], ik['object_id'])
 
 
 class MnliJsonlCtxSrc(RetrieverData):

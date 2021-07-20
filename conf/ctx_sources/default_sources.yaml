@@ -12,8 +12,9 @@ dpr_wiki_by_path:
 
 newspaper_archive:
   _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc
-  path_pattern: /mnt/data01/pipeline_egress/all1934_size50_marchManifest/**/ocr_*
+  path_pattern: /mnt/data01/pipeline_egress/all1933_size50_marchManifest/**/ocr_*
   layout_object: headline
+  page_filter: 1
 
 mnli_dev:
   _target_: dpr.data.retriever_data.MnliJsonlCtxSrc

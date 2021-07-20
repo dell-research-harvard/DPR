@@ -25,7 +25,7 @@ encoded_ctx_files: []
 out_file:
 # "regex" or "string"
 match: string
-n_docs: 100
+n_docs: 2000
 validation_workers: 16
 
 # Batch size to generate query embeddings
