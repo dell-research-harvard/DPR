@@ -12,6 +12,7 @@ import torch
 from omegaconf import DictConfig
 import ijson
 import glob
+from tqdm import tqdm
 
 from dpr.data.biencoder_data import (
     BiEncoderPassage,
@@ -342,7 +343,8 @@ class NewspaperArchiveCtxSrc(RetrieverData):
 
         ocr_text_generators = []
         scan_names = []
-        for file_path in self.file_paths:
+        print("Creating generators for OCR text JSONs...")
+        for file_path in tqdm(self.file_paths):
             with open(file_path, 'rb') as f:
                 items = ijson.kvitems(f, '')
                 for k, v in items:
@@ -360,8 +362,9 @@ class NewspaperArchiveCtxSrc(RetrieverData):
                     selected_generators.append(text_gen)
             print(f"{len(ocr_text_generators)} -> {len(selected_generators)} scans to be processed...")
             ocr_text_generators = selected_generators
-            
-        for gen in ocr_text_generators:
+        
+        print("Creating bi-encoder passage dictionary...")
+        for gen in tqdm(ocr_text_generators):
             for layobj in gen:
                 title, passage, object_id = layobj
                 uid = str(object_id) + '_' + title 
