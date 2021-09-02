@@ -341,41 +341,47 @@ class NewspaperArchiveCtxSrc(RetrieverData):
             from transformers import RobertaTokenizerFast
             tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
 
-        ocr_text_generators = []
-        scan_names = []
-        print("Creating generators for OCR text JSONs...")
-        for file_path in tqdm(self.file_paths):
-            with open(file_path, 'rb') as f:
-                items = ijson.kvitems(f, '')
-                for k, v in items:
-                    ocr_text_generators.append(self.ocr_text_iter(v))
-                    scan_names.append(k)
-            
         if self.n_random_papers:
+            print("Random newspaper subset...")
+            scan_names = []
+            for file_path in tqdm(self.file_paths):
+                with open(file_path, 'rb') as f:
+                    items = ijson.kvitems(f, '')
+                    for k, v in items:
+                        scan_names.append(k)
             papers = list(set([self.get_paper_name(scan) for scan in scan_names]))
             print(f"{len(papers)} total papers...")
             random_papers = random.sample(papers, self.n_random_papers)
             print(f"Selected random papers: {random_papers}")
-            selected_generators = []
-            for scan_name, text_gen in zip(scan_names, ocr_text_generators):
-                if scan_name in random_papers:
-                    selected_generators.append(text_gen)
-            print(f"{len(ocr_text_generators)} -> {len(selected_generators)} scans to be processed...")
-            ocr_text_generators = selected_generators
-        
-        print("Creating bi-encoder passage dictionary...")
-        for gen in tqdm(ocr_text_generators):
-            for layobj in gen:
-                title, passage, object_id = layobj
-                uid = str(object_id) + '_' + title 
-                if self.normalize:
-                    if self.layout_object == 'headline':
-                        passage = normalize_passage(passage)
-                        passage = passage.lower()
+
+        print("Creating bi-encoder dict...")
+        for file_path in tqdm(self.file_paths):
+            
+            with open(file_path, 'rb') as f:
+                items = ijson.kvitems(f, '')
+                ocr_text_generators = []
+                for k, v in items:
+                    if self.n_random_papers:
+                        if self.get_paper_name(k) in random_papers:
+                            ocr_text_generators.append(self.ocr_text_iter(v))
                     else:
-                        passage = normalize_passage(passage)
-                        passage = take_max_roberta_paragraphs(passage, tokenizer)
-                ctxs[uid] = BiEncoderPassage(passage, title)
+                        ocr_text_generators.append(self.ocr_text_iter(v))
+
+            if len(ocr_text_generators) == 0:
+                continue
+                
+            for gen in ocr_text_generators:
+                for layobj in gen:
+                    title, passage, object_id = layobj
+                    uid = str(object_id) + '_' + title 
+                    if self.normalize:
+                        if self.layout_object == 'headline':
+                            passage = normalize_passage(passage)
+                            passage = passage.lower()
+                        else:
+                            passage = normalize_passage(passage)
+                            passage = take_max_roberta_paragraphs(passage, tokenizer)
+                    ctxs[uid] = BiEncoderPassage(passage, title)
 
     def ocr_text_iter(self, v):
         for ik in v:
