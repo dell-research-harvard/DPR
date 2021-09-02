@@ -346,6 +346,7 @@ class NewspaperArchiveCtxSrc(RetrieverData):
             
             if self.n_random_papers:
                 papers = list(set([self.get_paper_name(scan) for scan in scan_names]))
+                print(f"{len(papers)} total papers...")
                 random_papers = random.sample(papers, self.n_random_papers)
                 print(f"Selected random papers: {random_papers}")
                 selected_generators = []
