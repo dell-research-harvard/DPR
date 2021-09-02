@@ -4,6 +4,7 @@ import json
 import logging
 import pickle
 from typing import Dict
+import random
 
 import hydra
 import jsonlines
@@ -15,6 +16,7 @@ import glob
 from dpr.data.biencoder_data import (
     BiEncoderPassage,
     normalize_passage,
+    take_max_roberta_paragraphs,
     normalize_question,
     get_dpr_files,
     read_nq_tables_jsonl,
@@ -323,37 +325,51 @@ class NewspaperArchiveCtxSrc(RetrieverData):
         page_filter: int = None,
         id_prefix: str = None,
         normalize: bool = False,
+        n_random_papers: bool = False,
     ):
         self.id_prefix = id_prefix
         self.normalize = normalize
         self.file_paths = glob.glob(path_pattern)
         self.layout_object = layout_object
         self.page_filter = page_filter
+        self.n_random_papers = n_random_papers
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
         for file_path in self.file_paths:
             with open(file_path, 'rb') as f:
                 items = ijson.kvitems(f, '')
-
                 ocr_text_generators = []
+                scan_names = []
                 for k, v in items:
                     ocr_text_generators.append(self.ocr_text_iter(v))
-                """
-                ocr_text_generators = [
-                    ((ik['image_file_name'], ik['ocr_text'], ik['object_id']) 
-                        for ik in v if ik['label']==self.layout_object)
-                    for k, v in items
-                ]
-                """
+                    scan_names.append(k)
+            
+            if self.n_random_papers:
+                papers = list(set([self.get_paper_name(scan) for scan in scan_names]))
+                random_papers = random.sample(papers, self.n_random_papers)
+                print(f"Selected random papers: {random_papers}")
+                selected_generators = []
+                for scan_name, text_gen in zip(scan_names, ocr_text_generators):
+                    if scan_name in random_papers:
+                        selected_generators.append(text_gen)
+                print(f"{len(ocr_text_generators)} -> {len(selected_generators)} scans to be processed...")
+                ocr_text_generators = selected_generators
 
+            if self.layout_object == "article":
+                from transformers import RobertaTokenizerFast
+                tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
+                
             for gen in ocr_text_generators:
                 for layobj in gen:
                     title, passage, object_id = layobj
                     uid = str(object_id) + '_' + title 
                     if self.normalize:
-                        passage = normalize_passage(passage)
                         if self.layout_object == 'headline':
+                            passage = normalize_passage(passage)
                             passage = passage.lower()
+                        else:
+                            passage = normalize_passage(passage)
+                            passage = take_max_roberta_paragraphs(passage, tokenizer)
                     ctxs[uid] = BiEncoderPassage(passage, title)
 
     def ocr_text_iter(self, v):
@@ -364,6 +380,10 @@ class NewspaperArchiveCtxSrc(RetrieverData):
                         yield (ik['image_file_name'], ik['ocr_text'], ik['object_id'])
                 else:
                     yield (ik['image_file_name'], ik['ocr_text'], ik['object_id'])
+
+    @staticmethod
+    def get_paper_name(file_end):
+        return "-".join(file_end.split("-")[1:-5])
 
 
 class MnliJsonlCtxSrc(RetrieverData):

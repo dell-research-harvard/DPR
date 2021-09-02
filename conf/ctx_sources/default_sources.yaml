@@ -12,9 +12,9 @@ dpr_wiki_by_path:
 
 newspaper_archive:
   _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc
-  path_pattern: /mnt/data01/pipeline_egress/all1933_size50_marchManifest/**/ocr_*
-  layout_object: headline
-  page_filter: 1
+  path_pattern: /mnt/data01/pipeline_backup/pipeline_egress/all_scans_dbx_text_files_1968/**/ocr_*
+  layout_object: article
+  n_random_papers: 100
 
 mnli_dev:
   _target_: dpr.data.retriever_data.MnliJsonlCtxSrc
