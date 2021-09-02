@@ -379,8 +379,8 @@ class NewspaperArchiveCtxSrc(RetrieverData):
                             passage = normalize_passage(passage)
                             passage = passage.lower()
                         else:
-                            passage = normalize_passage(passage)
                             passage = take_max_roberta_paragraphs(passage, tokenizer)
+                            passage = normalize_passage(passage)
                     ctxs[uid] = BiEncoderPassage(passage, title)
 
     def ocr_text_iter(self, v):
