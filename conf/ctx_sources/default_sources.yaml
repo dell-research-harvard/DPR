@@ -15,6 +15,7 @@ newspaper_archive:
   path_pattern: /mnt/data01/pipeline_backup/pipeline_egress/all_scans_dbx_text_files_1968/**/ocr_*
   layout_object: article
   n_random_papers: 100
+  normalize: True
 
 mnli_dev:
   _target_: dpr.data.retriever_data.MnliJsonlCtxSrc
