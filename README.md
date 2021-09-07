@@ -7,16 +7,6 @@ It is based on the following paper:
 
 Vladimir Karpukhin, Barlas Oğuz, Sewon Min, Patrick Lewis, Ledell Wu, Sergey Edunov, Danqi Chen, Wen-tau Yih, [Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906), Preprint 2020.
 
-If you find this paper or this code useful, please cite this paper:
-```
-@article{karpukhin2020dense,
-  title={Dense Passage Retrieval for Open-Domain Question Answering},
-  author={Karpukhin, Vladimir and O{\u{g}}uz, Barlas and Min, Sewon and Wu, Ledell and Edunov, Sergey and Chen, Danqi and Yih, Wen-tau},
-  journal={arXiv preprint arXiv:2004.04906},
-  year={2020}
-}
-```
-
 ## Features
 1. Dense retriever model is based on bi-encoder architecture.
 2. Extractive Q&A reader&ranker joint model inspired by [this](https://arxiv.org/abs/1911.03868) paper.
