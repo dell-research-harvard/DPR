@@ -601,7 +601,7 @@ class JsonLTablesQADataset(Dataset):
         # get the first non empty row as the "header"
         for i, r in enumerate(rows):
             row_lin, row_len = JsonLTablesQADataset._linearize_row(r)
-            if len(row_lin) > 1:  # TODO: change to checking cell value tokens
+            if len(row_lin) > 1:
                 header = row_lin
                 header_len += row_len
                 start_row = i
@@ -613,7 +613,7 @@ class JsonLTablesQADataset(Dataset):
 
         for i in range(start_row + 1, len(rows)):
             row_lin, row_len = JsonLTablesQADataset._linearize_row(rows[i])
-            if len(row_lin) > 1:  # TODO: change to checking cell value tokens
+            if len(row_lin) > 1:
                 current_rows.append(row_lin)
                 current_len += row_len
             if current_len >= max_length:
@@ -637,7 +637,7 @@ class JsonLTablesQADataset(Dataset):
         # get the first non empty row as the "header"
         for i, r in enumerate(rows):
             row_lin, row_len = JsonLTablesQADataset._linearize_row(r)
-            if len(row_lin) > 1:  # TODO: change to checking cell value tokens
+            if len(row_lin) > 1:
                 selected_rows.add(i)
                 rows_linearized.append(row_lin)
                 total_words_len += row_len
@@ -668,7 +668,7 @@ class JsonLTablesQADataset(Dataset):
             for i in rows_indexes:
                 if i not in selected_rows:
                     row_lin, row_len = JsonLTablesQADataset._linearize_row(rows[i])
-                    if len(row_lin) > 1:  # TODO: change to checking cell value tokens
+                    if len(row_lin) > 1:
                         selected_rows.add(i)
                         rows_linearized.append(row_lin)
                         total_words_len += row_len
@@ -695,7 +695,6 @@ def split_tables_to_chunks(
     chunks = []
     chunk_id = 0
     for i, t in enumerate(tables_as_dicts):
-        # TODO: support other types
         assert split_type == "type1"
         table_chunks = JsonLTablesQADataset.split_table(t, max_table_len)
         title = t["caption"]

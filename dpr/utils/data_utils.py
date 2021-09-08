@@ -122,7 +122,6 @@ class ShardedDataIterator(object):
         shard_indices = indices[self.shard_start_idx : self.shard_end_idx]
         return shard_indices
 
-    # TODO: merge with iterate_ds_sampled_data
     def iterate_ds_data(self, epoch: int = 0) -> Iterator[List]:
         # if resuming iteration somewhere in the middle of epoch, one needs to adjust max_iterations
         max_iterations = self.max_iterations - self.iteration
@@ -172,7 +171,6 @@ class ShardedDataIterator(object):
                 self.iteration, self.shard_id
             )
         )
-        # TODO: reset the iteration status?
         self.iteration = 0
 
     def get_dataset(self) -> torch.utils.data.Dataset:
@@ -275,7 +273,6 @@ class MultiSetDataIterator(object):
         )
         [next(it, None) for it in iterators]
 
-        # TODO: clear iterators in some non-hacky way
         for it in self.iterables:
             it.iteration = 0
         logger.info(

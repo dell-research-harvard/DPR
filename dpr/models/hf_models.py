@@ -112,7 +112,6 @@ def get_bert_tensorizer(cfg, tokenizer=None):
 def _add_special_tokens(tokenizer, special_tokens):
     logger.info("Adding special tokens %s", special_tokens)
     special_tokens_num = len(special_tokens)
-    # TODO: this is a hack-y logic that uses some private tokenizer structure which can be changed in HF code
     assert special_tokens_num < 50
     unused_ids = [
         tokenizer.vocab["[unused{}]".format(i)] for i in range(special_tokens_num)
@@ -278,7 +277,6 @@ class BertTensorizer(Tensorizer):
     ):
         text = text.strip()
         # tokenizer automatic padding is explicitly disabled since its inconsistent behavior
-        # TODO: move max len to methods params?
 
         if title:
             token_ids = self.tokenizer.encode(

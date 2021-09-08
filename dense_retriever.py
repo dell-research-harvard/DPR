@@ -59,7 +59,6 @@ def generate_question_vectors(
             batch_questions = questions[batch_start : batch_start + bsz]
 
             if query_token:
-                # TODO: tmp workaround for EL, remove or revise
                 if query_token == "[START_ENT]":
                     batch_token_tensors = [
                         _select_span_with_token(q, tensorizer, token_str=query_token)

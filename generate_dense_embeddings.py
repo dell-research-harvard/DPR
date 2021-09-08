@@ -77,7 +77,6 @@ def gen_ctx_vectors(
         assert len(ctx_ids) == out.size(0)
         total += len(ctx_ids)
 
-        # TODO: refactor to avoid 'if'
         if extra_info:
             results.extend(
                 [

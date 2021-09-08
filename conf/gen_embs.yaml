@@ -33,11 +33,9 @@ special_tokens:
 
 tables_chunk_sz: 100
 
-# TODO
 tables_split_type: type1
 
 
-# TODO: move to a conf group
 # local_rank for distributed training on gpus
 local_rank: -1
 device:

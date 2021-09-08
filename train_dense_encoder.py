@@ -179,7 +179,6 @@ class BiEncoderTrainer(object):
         warmup_steps = cfg.train.warmup_steps
 
         if self.scheduler_state:
-            # TODO: ideally we'd want to just call
             # scheduler.load_state_dict(self.scheduler_state)
             # but it doesn't work properly as of now
 
@@ -626,7 +625,6 @@ class BiEncoderTrainer(object):
             self.start_batch = 0
         else:
             self.start_epoch = epoch
-            # TODO: offset doesn't work for multiset currently
             self.start_batch = 0  # offset
 
         model_to_load = get_model_obj(self.biencoder)

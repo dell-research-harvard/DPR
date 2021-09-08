@@ -55,7 +55,6 @@ gold_passages_src_dev:
 # num of threads to pre-process data.
 num_workers: 16
 
-# TODO: move to a conf group
 # local_rank for distributed training on gpus
 local_rank: -1
 global_loss_buf_sz: 150000

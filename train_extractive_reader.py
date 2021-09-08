@@ -532,7 +532,6 @@ class ReaderTrainer(object):
             )
 
         else:
-            # TODO: remove?
             with torch.no_grad():
                 start_logits, end_logits, rank_logits = self.reader(
                     input.input_ids, attn_mask

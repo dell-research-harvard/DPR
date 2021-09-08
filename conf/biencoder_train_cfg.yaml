@@ -22,7 +22,6 @@ checkpoint_file_name: dpr_biencoder_mnli
 # A trained bi-encoder checkpoint file to initialize the model
 model_file:
 
-# TODO: move to a conf group
 # local_rank for distributed training on gpus
 local_rank: -1
 global_loss_buf_sz: 592000

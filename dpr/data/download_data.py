@@ -20,7 +20,6 @@ from typing import Tuple
 
 logger = logging.getLogger(__name__)
 
-# TODO: move to hydra config group
 
 NQ_LICENSE_FILES = [
     "https://dl.fbaipublicfiles.com/dpr/nq_license/LICENSE",
