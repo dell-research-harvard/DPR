@@ -3,6 +3,7 @@ defaults:
   - datasets: retriever_default # contains a list of all possible sources of queries for evaluation. Specific set is selected by qa_dataset parameter
   - ctx_sources: default_sources # contains a list of all possible passage sources. Specific passages sources selected by ctx_datatsets parameter
 
+# "indexers:" - a parameters map that defines various indexes. The actual index is selected by indexer parameter (below) which is 'flat' by default.
 indexers:
   flat:
     _target_: dpr.indexer.faiss_indexers.DenseFlatIndexer
@@ -51,6 +52,8 @@ model_file:
 
 validate_as_tables: False
 rpc_retriever_cfg_file:
+
+# Can use loss index types by setting indexer: hnsw or indexer: hnsw_sq
 indexer: flat
 
 # tokens which won't be slit by tokenizer

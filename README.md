@@ -168,7 +168,6 @@ Embeddings resource name for the new better model 'data.retriever_results.nq.sin
 We generally use the following params on 50 2-gpu nodes: batch_size=128 shard_id=0 num_shards=50
 
 
-
 ## Retriever validation against the entire set of documents:
 
 ```bash
@@ -183,6 +182,9 @@ python dense_retriever.py \
 ```
 
 For example, If your generated embeddings fpr two passages set as ~/myproject/embeddings_passages1/wiki_passages_* and ~/myproject/embeddings_passages2/wiki_passages_* files and want to evaluate on NQ dataset:
+
+One should specify the dataset to use by providing qa_dataset parameter in order to use one of them during evaluation. For example, if you want to run the retriever on NQ test set, set qa_dataset=nq_test as a command line parameter.
+
 
 ```bash
 python dense_retriever.py \
