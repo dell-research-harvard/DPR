@@ -397,6 +397,66 @@ class NewspaperArchiveCtxSrc(RetrieverData):
         return "-".join(file_end.split("-")[1:-5])
 
 
+class NewspapersGenericCtxSrc(RetrieverData):
+    def __init__(
+            self,
+            path_pattern: str,
+            layout_object: str = 'article',
+            page_filter: int = None,
+            id_prefix: str = None,
+            normalize: bool = False,
+    ):
+        self.id_prefix = id_prefix
+        self.normalize = normalize
+        self.file_paths = glob.glob(path_pattern)
+        self.layout_object = layout_object
+        self.page_filter = page_filter
+
+    def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
+
+        if self.layout_object == "article":
+            from transformers import RobertaTokenizerFast
+            tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
+
+        print("Creating bi-encoder dict...")
+        for file_path in tqdm(self.file_paths):
+
+            with open(file_path, 'rb') as f:
+                items = ijson.kvitems(f, '')
+                ocr_text_generators = []
+                for v in items:
+                    ocr_text_generators.append(self.ocr_text_iter(v))
+
+            if len(ocr_text_generators) == 0:
+                continue
+
+            for gen in ocr_text_generators:
+                for layobj in gen:
+                    title, passage, object_id = layobj
+                    uid = str(object_id) + '_' + title
+                    if self.normalize:
+                        if self.layout_object == 'headline':
+                            passage = normalize_passage(passage)
+                            passage = passage.lower()
+                        else:
+                            passage = take_max_roberta_paragraphs(passage, tokenizer)
+                            passage = normalize_passage(passage)
+                    ctxs[uid] = BiEncoderPassage(passage, title)
+
+    def ocr_text_iter(self, v):
+        for ik in v:
+            if ik['label'] == self.layout_object:
+                if self.page_filter:
+                    if not ik['image_file_name'].split('.')[0].endswith(f'p-{self.page_filter}'):
+                        yield (ik['image_file_name'], ik['ocr_text'], ik['object_id'])
+                else:
+                    yield (ik['image_file_name'], ik['ocr_text'], ik['object_id'])
+
+    @staticmethod
+    def get_paper_name(file_end):
+        return "-".join(file_end.split("-")[1:-5])
+
+
 class MnliJsonlCtxSrc(RetrieverData):
     def __init__(
         self,

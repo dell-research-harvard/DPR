@@ -28,3 +28,9 @@ hf_datasets:
   dataset: ag_news
   split: test
   passage_char_max: 500
+
+newspapers_generic:
+  _target_: dpr.data.retriever_data.NewspapersGenericCtxSrc
+  path_pattern: /mnt/data02/retrieval/retrieval_test/100_full_paper_samp/*
+  layout_object: article
+  normalize: True
