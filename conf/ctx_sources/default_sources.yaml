@@ -12,7 +12,7 @@ dpr_wiki_by_path:
 
 newspaper_archive:
   _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc
-  path_pattern: /mnt/data02/retrieval/retrieval_test/100_full_paper_samp/*
+  path_pattern: /content/drive/MyDrive/mini_batch_0/* #/mnt/data02/retrieval/retrieval_test/100_full_paper_samp/*
   layout_object: article
   n_random_papers: False
   normalize: True
