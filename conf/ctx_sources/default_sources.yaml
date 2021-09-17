@@ -31,6 +31,6 @@ hf_datasets:
 
 newspapers_generic:
   _target_: dpr.data.retriever_data.NewspapersGenericCtxSrc
-  path_pattern: /mnt/data02/retrieval/retrieval_test/100_full_paper_samp/*
+  path_pattern: /content/drive/MyDrive/mini_batch_0/*  #/mnt/data02/retrieval/retrieval_test/100_full_paper_samp/*
   layout_object: article
   normalize: True
