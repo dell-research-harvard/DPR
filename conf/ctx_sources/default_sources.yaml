@@ -14,7 +14,7 @@ newspaper_archive:
   _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc
   path_pattern: /mnt/data01/pipeline_backup/pipeline_egress/all_scans_dbx_text_files_1968/mini_batch_0/ocr_*  #/mnt/data02/retrieval/retrieval_test/100_full_paper_samp/*
   layout_object: article
-  n_random_papers: 10
+  n_random_papers: 1
   normalize: True
 
 mnli_dev:
