@@ -230,7 +230,7 @@ def save_results(
                             "text": docs[c][0],
                             "score": scores[c],
                         }
-                        for c in range(ctxs_num)
+                        for c in strata_range
                     ],
                 }
             )
