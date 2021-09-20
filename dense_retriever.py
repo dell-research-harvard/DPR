@@ -419,11 +419,6 @@ def main(cfg: DictConfig):
             retriever.index.serialize(index_path)
 
     # get top k results
-    top_ids_and_scores = retriever.get_top_docs(questions_tensor.numpy(), cfg.n_docs)
-
-    # we no longer need the index
-    retriever = None
-
     all_passages = {}
     for ctx_src in ctx_sources:
         ctx_src.load_data_to(all_passages)
@@ -432,6 +427,16 @@ def main(cfg: DictConfig):
         raise RuntimeError(
             "No passages data found. Please specify ctx_file param properly."
         )
+
+    if cfg.n_docs == "all":
+        k_top = len(all_passages)
+    else:
+        k_top = cfg.n_docs
+
+    top_ids_and_scores = retriever.get_top_docs(questions_tensor.numpy(), k_top)
+
+    # we no longer need the index
+    retriever = None
 
     if cfg.validate_as_tables:
         questions_doc_hits = validate_tables(

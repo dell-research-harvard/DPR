@@ -26,7 +26,10 @@ encoded_ctx_files: []
 out_file:
 # "regex" or "string"
 match: string
-n_docs: 2000
+
+# How many context articles to return. Specify integer or "all".
+n_docs: all
+
 validation_workers: 16
 
 # Batch size to generate query embeddings
