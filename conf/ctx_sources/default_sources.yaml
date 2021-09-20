@@ -12,7 +12,7 @@ dpr_wiki_by_path:
 
 newspaper_archive:
   _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc
-  path_pattern: /mnt/data02/retrieval/retrieval_test/100_full_paper_samp/*  #/mnt/data01/pipeline_backup/pipeline_egress/all_scans_dbx_text_files_1968/mini_batch_0/ocr_*
+  path_pattern: C:/Users/Emily/Downloads/out_file_caribou-county-sun.json  #/mnt/data02/retrieval/retrieval_test/100_full_paper_samp/*
   layout_object: article
   n_random_papers: False
   normalize: True
