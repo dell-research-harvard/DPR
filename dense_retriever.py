@@ -44,19 +44,19 @@ setup_logger(logger)
 
 
 def generate_question_vectors(
-    question_encoder: torch.nn.Module,
-    tensorizer: Tensorizer,
-    questions: List[str],
-    bsz: int,
-    query_token: str = None,
-    selector: RepTokenSelector = None,
+        question_encoder: torch.nn.Module,
+        tensorizer: Tensorizer,
+        questions: List[str],
+        bsz: int,
+        query_token: str = None,
+        selector: RepTokenSelector = None,
 ) -> T:
     n = len(questions)
     query_vectors = []
 
     with torch.no_grad():
         for j, batch_start in enumerate(range(0, n, bsz)):
-            batch_questions = questions[batch_start : batch_start + bsz]
+            batch_questions = questions[batch_start: batch_start + bsz]
 
             if query_token:
                 if query_token == "[START_ENT]":
@@ -104,7 +104,7 @@ def generate_question_vectors(
 
 class DenseRetriever(object):
     def __init__(
-        self, question_encoder: nn.Module, batch_size: int, tensorizer: Tensorizer
+            self, question_encoder: nn.Module, batch_size: int, tensorizer: Tensorizer
     ):
         self.question_encoder = question_encoder
         self.batch_size = batch_size
@@ -112,9 +112,8 @@ class DenseRetriever(object):
         self.selector = None
 
     def generate_question_vectors(
-        self, questions: List[str], query_token: str = None
+            self, questions: List[str], query_token: str = None
     ) -> T:
-
         bsz = self.batch_size
         self.question_encoder.eval()
         return generate_question_vectors(
@@ -133,20 +132,20 @@ class LocalFaissRetriever(DenseRetriever):
     """
 
     def __init__(
-        self,
-        question_encoder: nn.Module,
-        batch_size: int,
-        tensorizer: Tensorizer,
-        index: DenseIndexer,
+            self,
+            question_encoder: nn.Module,
+            batch_size: int,
+            tensorizer: Tensorizer,
+            index: DenseIndexer,
     ):
         super().__init__(question_encoder, batch_size, tensorizer)
         self.index = index
 
     def index_encoded_data(
-        self,
-        vector_files: List[str],
-        buffer_size: int,
-        path_id_prefixes: List = None,
+            self,
+            vector_files: List[str],
+            buffer_size: int,
+            path_id_prefixes: List = None,
     ):
         """
         Indexes encoded passages takes form a list of files
@@ -156,7 +155,7 @@ class LocalFaissRetriever(DenseRetriever):
         """
         buffer = []
         for i, item in enumerate(
-            iterate_encoded_files(vector_files, path_id_prefixes=path_id_prefixes)
+                iterate_encoded_files(vector_files, path_id_prefixes=path_id_prefixes)
         ):
             buffer.append(item)
             if 0 < buffer_size == len(buffer):
@@ -166,7 +165,7 @@ class LocalFaissRetriever(DenseRetriever):
         logger.info("Data indexing completed.")
 
     def get_top_docs(
-        self, query_vectors: np.array, top_docs: int = 100
+            self, query_vectors: np.array, top_docs: int = 100
     ) -> List[Tuple[List[object], List[float]]]:
         """
         Does the retrieval of the best matching passages given the query vectors batch
@@ -182,11 +181,11 @@ class LocalFaissRetriever(DenseRetriever):
 
 
 def validate(
-    passages: Dict[object, Tuple[str, str]],
-    answers: List[List[str]],
-    result_ctx_ids: List[Tuple[List[object], List[float]]],
-    workers_num: int,
-    match_type: str,
+        passages: Dict[object, Tuple[str, str]],
+        answers: List[List[str]],
+        result_ctx_ids: List[Tuple[List[object], List[float]]],
+        workers_num: int,
+        match_type: str,
 ) -> List[List[bool]]:
     match_stats = calculate_matches(
         passages, answers, result_ctx_ids, workers_num, match_type
@@ -200,48 +199,54 @@ def validate(
 
 
 def save_results(
-    passages: Dict[object, Tuple[str, str]],
-    questions: List[str],
-    answers: List[List[str]],
-    top_passages_and_scores: List[Tuple[List[object], List[float]]],
-    per_question_hits: List[List[bool]],
-    out_file: str,
+        passages: Dict[object, Tuple[str, str]],
+        questions: List[str],
+        answers: List[List[str]],
+        top_passages_and_scores: List[Tuple[List[object], List[float]]],
+        per_question_hits: List[List[bool]],
+        out_file: str,
 ):
     # join passages text with the result ids, their questions and assigning has|no answer labels
-    merged_data = []
     # assert len(per_question_hits) == len(questions) == len(answers)
     for i, q in enumerate(questions):
-        q_answers = answers[i]
+        # q_answers = answers[i]
         results_and_scores = top_passages_and_scores[i]
         hits = per_question_hits[i]
         docs = [passages[doc_id] for doc_id in results_and_scores[0]]
         scores = [str(score) for score in results_and_scores[1]]
         ctxs_num = len(hits)
 
-        merged_data.append(
-            {
-                "question": q,
-                "answers": q_answers,
-                "ctxs": [
-                    {
-                        "id": results_and_scores[0][c],
-                        "title": docs[c][1],
-                        "text": docs[c][0],
-                        "score": scores[c],
-                        "has_answer": hits[c],
-                    }
-                    for c in range(ctxs_num)
-                ],
-            }
-        )
+        n_strata = 50
+        strata_size = round(ctxs_num / n_strata)
 
-    with open(out_file, "w") as writer:
-        writer.write(json.dumps(merged_data, indent=4) + "\n")
-    logger.info("Saved results * scores  to %s", out_file)
+        for l in range(n_strata):
+            merged_data = []
+            strata_range = range(l * strata_size, ((l + 1) * strata_size) - 1)
+
+            merged_data.append(
+                {
+                    # "question": q,
+                    # "answers": q_answers,
+                    "ctxs": [
+                        {
+                            "id": results_and_scores[0][c],
+                            "title": docs[c][1],
+                            "text": docs[c][0],
+                            "score": scores[c],
+                            "has_answer": hits[c],
+                        }
+                        for c in strata_range
+                    ],
+                }
+            )
+
+            with open(f"{out_file}/strata_{l}_{i}.json", "w") as writer:
+                writer.write(json.dumps(merged_data, indent=4) + "\n")
+            logger.info("Saved results * scores  to %s", f"out_file/strata_{l}_{i}.json")
 
 
 def iterate_encoded_files(
-    vector_files: list, path_id_prefixes: List = None
+        vector_files: list, path_id_prefixes: List = None
 ) -> Iterator[Tuple]:
     for i, file in enumerate(vector_files):
         logger.info("Reading file %s", file)
@@ -258,11 +263,11 @@ def iterate_encoded_files(
 
 
 def validate_tables(
-    passages: Dict[object, TableChunk],
-    answers: List[List[str]],
-    result_ctx_ids: List[Tuple[List[object], List[float]]],
-    workers_num: int,
-    match_type: str,
+        passages: Dict[object, TableChunk],
+        answers: List[List[str]],
+        result_ctx_ids: List[Tuple[List[object], List[float]]],
+        workers_num: int,
+        match_type: str,
 ) -> List[List[bool]]:
     match_stats = calculate_chunked_matches(
         passages, answers, result_ctx_ids, workers_num, match_type
