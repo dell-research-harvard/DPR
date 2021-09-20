@@ -205,6 +205,7 @@ def save_results(
         top_passages_and_scores: List[Tuple[List[object], List[float]]],
         per_question_hits: List[List[bool]],
         out_file: str,
+        n_strata: float,
 ):
     # join passages text with the result ids, their questions and assigning has|no answer labels
     # assert len(per_question_hits) == len(questions) == len(answers)
@@ -215,8 +216,6 @@ def save_results(
         docs = [passages[doc_id] for doc_id in results_and_scores[0]]
         scores = [str(score) for score in results_and_scores[1]]
         ctxs_num = len(hits)
-
-        n_strata = 50
         strata_size = round(ctxs_num / n_strata)
 
         for l in range(n_strata):
@@ -441,6 +440,7 @@ def main(cfg: DictConfig):
             top_ids_and_scores,
             questions_doc_hits,
             cfg.out_file,
+            cfg.num_strat,
         )
 
     if cfg.kilt_out_file:
