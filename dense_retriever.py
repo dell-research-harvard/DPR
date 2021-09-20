@@ -223,13 +223,16 @@ def save_results(
 
             merged_data.append(
                 {
-                    "id": results_and_scores[0][c],
-                    "title": docs[c][1],
-                    "text": docs[c][0],
-                    "score": scores[c],
-                    "has_answer": hits[c],
+                    "ctxs": [
+                        {
+                            "id": results_and_scores[0][c],
+                            "title": docs[c][1],
+                            "text": docs[c][0],
+                            "score": scores[c],
+                        }
+                        for c in range(ctxs_num)
+                    ],
                 }
-                for c in strata_range
             )
 
             with open(f"{out_file}/strata_{l}_{i}.json", "w") as writer:
