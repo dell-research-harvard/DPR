@@ -388,7 +388,7 @@ class NewspaperArchiveCtxSrc(RetrieverData):
             if ik['label'] == self.layout_object:
                 if self.page_filter:
                     if not ik['image_file_name'].split('.')[0].endswith(f'p-{self.page_filter}'):
-                        yield (ik['image_file_name'], ik['ocr_text'], ik['object_id'])
+                        yield (ik['image_file_name'], ik['ocr_text'], ik['object_id'])                                  # defines title, passage, object_id
                 else:
                     yield (ik['image_file_name'], ik['ocr_text'], ik['object_id'])
 
