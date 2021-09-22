@@ -157,7 +157,7 @@ def main(cfg: DictConfig):
     )
     shard_passages = all_passages[start_idx:end_idx]
 
-    data = gen_ctx_vectors(cfg, shard_passages, encoder, tensorizer, True)
+    data = gen_ctx_vectors(cfg, shard_passages, encoder, tensorizer, cfg.title_embed)
 
     file = cfg.out_file + "_" + str(cfg.shard_id)
     pathlib.Path(os.path.dirname(file)).mkdir(parents=True, exist_ok=True)
