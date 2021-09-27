@@ -41,5 +41,6 @@ setup(
         "simplejson",
         "jsonlines",
         "ijson",
+        "pandas"
     ],
 )
