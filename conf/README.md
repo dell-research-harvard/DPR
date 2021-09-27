@@ -59,9 +59,5 @@ If you want to override parameters within these config files, there are multiple
 * Override specific parameter from command line. For example: `encoder.sequence_length=300`.
 
 
-### Main changes
-
-#### MNLI
-
 
 
