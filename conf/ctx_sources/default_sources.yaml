@@ -17,6 +17,13 @@ newspaper_archive:
   n_random_papers: False
   normalize: True
 
+newspaper_archive_heads:
+  _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc_heads
+  path_pattern: /mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full/*
+  n_random_papers: False
+  normalize: True
+
+
 mnli_dev:
   _target_: dpr.data.retriever_data.MnliJsonlCtxSrc
   file: /mnt/data01/mnli_for_dpr_dev.jsonl
