@@ -17,7 +17,7 @@ def get_paper_name(file_end):
 
 
 n_random_papers = 100
-path_pattern = '/mnt/data01/pipeline_backup/pipeline_egress/all_scans_dbx_text_files_1968/**/ocr_*'
+path_pattern = '/mnt/data01/pipeline_backup/pipeline_egress/all_scans_dbx_text_files_1968_full/**/ocr_*'
 
 # Create list of file names
 scan_names = []
@@ -43,5 +43,5 @@ for paper in random_papers:
                     # print({k:v})
                     random_selection[k] = v
 
-    with open(f"/mnt/data02/retrieval/retrieval_test/100_full_paper_samp/out_file_{paper}.json", "w") as writer:
+    with open(f"/mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full/out_file_{paper}.json", "w") as writer:
         writer.write(simplejson.dumps(random_selection, indent=4) + "\n")
