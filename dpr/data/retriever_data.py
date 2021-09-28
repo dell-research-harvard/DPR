@@ -401,37 +401,19 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
     def __init__(
             self,
             path_pattern: str,
-            # layout_object: str = 'article',
             page_filter: int = None,
             id_prefix: str = None,
             normalize: bool = False,
-            n_random_papers: bool = False,
     ):
         self.id_prefix = id_prefix
         self.normalize = normalize
         self.file_paths = glob.glob(path_pattern)
-        # self.layout_object = layout_object
         self.page_filter = page_filter
-        self.n_random_papers = n_random_papers
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
 
-        # if self.layout_object == "article":
         from transformers import RobertaTokenizerFast
         tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
-
-        # if self.n_random_papers:
-        #    print("Random newspaper subset...")
-        #    scan_names = []
-        #    for file_path in tqdm(self.file_paths):
-        #        with open(file_path, 'rb') as f:
-        #            items = ijson.kvitems(f, '')
-        #            for k, v in items:
-        #                scan_names.append(k)
-        #    papers = list(set([self.get_paper_name(scan) for scan in scan_names]))
-        #    print(f"{len(papers)} total papers...")
-        #    random_papers = random.sample(papers, self.n_random_papers)
-        #    print(f"Selected random papers: {random_papers}")
 
         print("Creating bi-encoder dict...")
         for file_path in tqdm(self.file_paths):
@@ -440,10 +422,6 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
                 items = ijson.kvitems(f, '')
                 ocr_text_generators = []
                 for k, v in items:
-                    # if self.n_random_papers:
-                    #    if self.get_paper_name(k) in random_papers:
-                    #        ocr_text_generators.append(self.ocr_text_iter(v))
-                    # else:
                     ocr_text_generators.append(self.ocr_text_iter(v))
 
             if len(ocr_text_generators) == 0:
