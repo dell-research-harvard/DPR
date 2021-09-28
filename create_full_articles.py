@@ -11,7 +11,7 @@ import simplejson
 
 from dpr.utils.qualitycheckingfunctions import *
 
-path_pattern = '/mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1968_faro_lr4/**/ocr_*'
+path_pattern = '/mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1968_faro_lr4/mini_batch_0/ocr_*'
 save_dir = '/mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1968_full/'
 spell_dict = load_lowercase_spell_dict('/mnt/data02/retrieval/preprocess/hunspell_word_dict_lower')
 
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     for path in tqdm(glob.glob(path_pattern)):
         full_article_file = create_full_articles(path)
 
-        save_end = path.split('\\')[-2:]                                                                           # might need changing for Guppy
+        save_end = path.split('/')[-2:]                                                                           # might need changing for Guppy
         save_batch_dir = os.path.join(save_dir, save_end[0])
         os.makedirs(save_batch_dir, exist_ok=True)
 
