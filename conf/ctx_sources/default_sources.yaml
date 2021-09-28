@@ -19,7 +19,7 @@ newspaper_archive:
 
 newspaper_archive_heads:
   _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc_heads
-  path_pattern: /content/drive/MyDrive/University/Predoc/Newspapers/Retrieval/100_full_paper_samp_full/*  #/mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full/*
+  path_pattern: /mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full/*
   n_random_papers: False
   normalize: True
 
