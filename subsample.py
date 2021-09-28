@@ -17,7 +17,7 @@ def get_paper_name(file_end):
 
 
 n_random_papers = 100
-path_pattern = '/mnt/data01/pipeline_backup/pipeline_egress/all_scans_dbx_text_files_1968_full/**/ocr_*'
+path_pattern = '/mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1968_full/**/ocr_*'
 
 # Create list of file names
 scan_names = []
