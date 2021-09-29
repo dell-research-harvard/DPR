@@ -4,10 +4,10 @@ import ijson
 import os
 import simplejson
 
-# path = '/mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full/out_file_*'
-path = 'C:/Users/Emily/Downloads/100_full_paper_samp_full/out_file_*'
-# save_dir = '/mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full_wids/'
-save_dir = 'C:/Users/Emily/Downloads/100_full_paper_samp_full_wids/'
+path = '/mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full/out_file_*'
+# path = 'C:/Users/Emily/Downloads/100_full_paper_samp_full/out_file_*'
+save_dir = '/mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full_wids/'
+# save_dir = 'C:/Users/Emily/Downloads/100_full_paper_samp_full_wids/'
 
 os.makedirs(save_dir, exist_ok=True)
 
@@ -23,8 +23,8 @@ for file_path in tqdm(glob.glob(path)):
                 v_with_ids.append(v[i])
             id_file[k] = v_with_ids
 
-    save_end = file_path.split('\\')[-1:]                                                                               # might need changing for Guppy
-    # save_end = file_path.split('/')[-1:]
+    # save_end = file_path.split('\\')[-1:]                                                                             # might need changing for Guppy
+    save_end = file_path.split('/')[-1:]
     save_path = os.path.join(save_dir, save_end[0])
 
     with open(save_path, "w") as writer:
