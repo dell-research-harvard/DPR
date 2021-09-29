@@ -463,12 +463,12 @@ class NewspaperArchiveCtxSrc_test(RetrieverData):
 
     def ocr_text_iter(self, v):
         for ik in v:
-            if ik['label'] == self.layout_object:
-                if self.page_filter:
-                    if not ik['image_file_name'].split('.')[0].endswith(f'p-{self.page_filter}'):
-                        yield (ik['headline'], ik['article'], ik['object_id'])                                  # defines title, passage, object_id
-                else:
-                    yield (ik['headline'], ik['article'], ik['object_id'])
+            # if ik['label'] == self.layout_object:
+            if self.page_filter:
+                if not ik['image_file_name'].split('.')[0].endswith(f'p-{self.page_filter}'):
+                    yield (ik['headline'], ik['article'], ik['object_id'])                                  # defines title, passage, object_id
+            else:
+                yield (ik['headline'], ik['article'], ik['object_id'])
 
     @staticmethod
     def get_paper_name(file_end):
