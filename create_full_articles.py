@@ -91,7 +91,10 @@ def create_full_articles(file_path):
                                 fa["id"] = str(fa_list[m]['full_article_id']) + '_' + fa_list[m]['image_file_name']
                             else:
                                 assert fa["id"] == str(fa_list[m]['full_article_id']) + '_' + fa_list[m]['image_file_name']
-                fa_v.append(fa)
+
+                # Reject articles with empty or very short length
+                if len(fa["article"]) > 25:
+                    fa_v.append(fa)
 
             if len(fa_v) > 0:
                 fa_file[k] = fa_v
