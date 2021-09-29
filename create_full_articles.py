@@ -55,6 +55,7 @@ def create_full_articles(file_path):
                     "article": "",           # From label and ocr_text
                     "bbox": [],              # Should be able to max/min the existing bounding boxes
                     "full_article_id": "",   # Should be the same for everything within FA
+                    "id": "",                # Combination of full_article_id and image_file_name to create a unique id
                 }
 
                 for ro_id in set(ro_id):
@@ -85,6 +86,11 @@ def create_full_articles(file_path):
                                 fa["full_article_id"] = fa_list[m]["full_article_id"]
                             else:
                                 assert fa["full_article_id"] == fa_list[m]["full_article_id"]
+
+                            if fa["id"] == "":
+                                fa["id"] = str(fa_list[m]['full_article_id']) + '_' + fa_list[m]['image_file_name']
+                            else:
+                                assert fa["id"] == str(fa_list[m]['full_article_id']) + '_' + fa_list[m]['image_file_name']
                 fa_v.append(fa)
 
             if len(fa_v) > 0:
