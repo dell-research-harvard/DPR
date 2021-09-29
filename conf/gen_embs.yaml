@@ -18,7 +18,7 @@ out_file:
 do_lower_case: True
 
 # Whether to embed an article title/headline
-title_embed: False
+title_embed: True
 
 # Number(0-based) of data shard to process
 shard_id: 0
