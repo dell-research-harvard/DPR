@@ -19,7 +19,7 @@ newspaper_archive:
 
 newspaper_archive_test:
   _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc_test
-  path_pattern: /mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full/*
+  path_pattern: /mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full_wids/*
   layout_object: article
   n_random_papers: False
   normalize: True

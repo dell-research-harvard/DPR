@@ -451,7 +451,7 @@ class NewspaperArchiveCtxSrc_test(RetrieverData):
             for gen in ocr_text_generators:
                 for layobj in gen:
                     title, passage, object_id = layobj
-                    uid = str(object_id) + '_' + title
+                    uid = object_id
                     if self.normalize:
                         if self.layout_object == 'headline':
                             passage = normalize_passage(passage)
@@ -466,9 +466,9 @@ class NewspaperArchiveCtxSrc_test(RetrieverData):
             # if ik['label'] == self.layout_object:
             if self.page_filter:
                 if not ik['image_file_name'].split('.')[0].endswith(f'p-{self.page_filter}'):
-                    yield (ik['headline'], ik['article'], ik['object_id'])                                  # defines title, passage, object_id
+                    yield (ik['headline'], ik['article'], ik['id'])                                  # defines title, passage, object_id
             else:
-                yield (ik['headline'], ik['article'], ik['object_id'])
+                yield (ik['headline'], ik['article'], ik['id'])
 
     @staticmethod
     def get_paper_name(file_end):
