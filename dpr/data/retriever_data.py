@@ -396,97 +396,15 @@ class NewspaperArchiveCtxSrc(RetrieverData):
     def get_paper_name(file_end):
         return "-".join(file_end.split("-")[1:-5])
 
-class NewspaperArchiveCtxSrc_test(RetrieverData):
-    def __init__(
-            self,
-            path_pattern: str,
-            layout_object: str = 'article',
-            page_filter: int = None,
-            id_prefix: str = None,
-            normalize: bool = False,
-            n_random_papers: bool = False,
-    ):
-        self.id_prefix = id_prefix
-        self.normalize = normalize
-        self.file_paths = glob.glob(path_pattern)
-        self.layout_object = layout_object
-        self.page_filter = page_filter
-        self.n_random_papers = n_random_papers
-
-    def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
-
-        if self.layout_object == "article":
-            from transformers import RobertaTokenizerFast
-            tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
-
-        if self.n_random_papers:
-            print("Random newspaper subset...")
-            scan_names = []
-            for file_path in tqdm(self.file_paths):
-                with open(file_path, 'rb') as f:
-                    items = ijson.kvitems(f, '')
-                    for k, v in items:
-                        scan_names.append(k)
-            papers = list(set([self.get_paper_name(scan) for scan in scan_names]))
-            print(f"{len(papers)} total papers...")
-            random_papers = random.sample(papers, self.n_random_papers)
-            print(f"Selected random papers: {random_papers}")
-
-        print("Creating bi-encoder dict...")
-        for file_path in tqdm(self.file_paths):
-
-            with open(file_path, 'rb') as f:
-                items = ijson.kvitems(f, '')
-                ocr_text_generators = []
-                for k, v in items:
-                    if self.n_random_papers:
-                        if self.get_paper_name(k) in random_papers:
-                            ocr_text_generators.append(self.ocr_text_iter(v))
-                    else:
-                        ocr_text_generators.append(self.ocr_text_iter(v))
-
-            if len(ocr_text_generators) == 0:
-                continue
-
-            for gen in ocr_text_generators:
-                for layobj in gen:
-                    title, passage, object_id = layobj
-                    uid = object_id
-                    if self.normalize:
-                        if self.layout_object == 'headline':
-                            passage = normalize_passage(passage)
-                            passage = passage.lower()
-                        else:
-                            passage = take_max_roberta_paragraphs(passage, tokenizer)
-                            passage = normalize_passage(passage)
-                    ctxs[uid] = BiEncoderPassage(passage, title)
-
-    def ocr_text_iter(self, v):
-        for ik in v:
-            # if ik['label'] == self.layout_object:
-            if self.page_filter:
-                if not ik['image_file_name'].split('.')[0].endswith(f'p-{self.page_filter}'):
-                    yield (ik['headline'], ik['article'], ik['id'])                                  # defines title, passage, object_id
-            else:
-                yield (ik['headline'], ik['article'], ik['id'])
-
-    @staticmethod
-    def get_paper_name(file_end):
-        return "-".join(file_end.split("-")[1:-5])
-
 
 class NewspaperArchiveCtxSrc_heads(RetrieverData):
     def __init__(
             self,
             path_pattern: str,
-            page_filter: int = None,
-            id_prefix: str = None,
             normalize: bool = False,
     ):
-        self.id_prefix = id_prefix
         self.normalize = normalize
         self.file_paths = glob.glob(path_pattern)
-        self.page_filter = page_filter
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
 
@@ -507,27 +425,18 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
 
             for gen in ocr_text_generators:
                 for layobj in gen:
-                    headline, article, file_name, fa_id = layobj
-                    uid = str(fa_id) + '_' + file_name
+                    title, passage, object_id = layobj
+                    uid = object_id
                     if self.normalize:
-                        headline = normalize_passage(headline)
-                        headline = headline.lower()
-                        article = take_max_roberta_paragraphs(article, tokenizer)
-                        article = normalize_passage(article)
-                    ctxs[uid] = BiEncoderPassage(article, headline)
+                        title = normalize_passage(title)
+                        title = title.lower()
+                        passage = take_max_roberta_paragraphs(passage, tokenizer)
+                        passage = normalize_passage(passage)
+                    ctxs[uid] = BiEncoderPassage(passage, title)
 
     def ocr_text_iter(self, v):
         for ik in v:
-            if self.page_filter:
-                if not ik['image_file_name'].split('.')[0].endswith(f'p-{self.page_filter}'):
-                    yield (ik['headline'], ik['article'], ik['image_file_name'], ik['full_article_id'])  # defines title, passage, object_id
-            else:
-                yield (ik['headline'], ik['article'], ik['image_file_name'], ik['full_article_id'])
-
-    @staticmethod
-    def get_paper_name(file_end):
-        return "-".join(file_end.split("-")[1:-5])
-
+            yield (ik['headline'], ik['article'], ik['id'])
 
 
 class MnliJsonlCtxSrc(RetrieverData):
