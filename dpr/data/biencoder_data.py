@@ -280,7 +280,7 @@ def normalize_passage(ctx_text: str):
     return ctx_text
 
 
-def take_max_roberta_paragraphs(ctx_text, tokenizer, tok_space = 510, tok_max = 512):
+def take_max_roberta_paragraphs(ctx_text, tokenizer, tok_space = 400, tok_max = 402):
     paragraphs = ctx_text.split('\n\n')
     returned_paragraphs = []
     for paragraph in paragraphs:
