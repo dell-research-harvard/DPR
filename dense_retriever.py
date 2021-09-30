@@ -15,6 +15,7 @@ import logging
 import pickle
 import time
 from typing import List, Tuple, Dict, Iterator
+import os
 
 import hydra
 import numpy as np
@@ -456,6 +457,7 @@ def main(cfg: DictConfig):
         )
 
     if cfg.out_file:
+        os.makedirs(cfg.out_file, exist_ok=True)
         save_results(
             all_passages,
             questions,
