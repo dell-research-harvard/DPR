@@ -402,9 +402,11 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
             self,
             path_pattern: str,
             normalize: bool = False,
+            id_prefix: str = None,
     ):
         self.normalize = normalize
         self.file_paths = glob.glob(path_pattern)
+        self.id_prefix = id_prefix
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
 
