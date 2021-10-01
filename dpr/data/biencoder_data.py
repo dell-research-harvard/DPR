@@ -280,13 +280,19 @@ def normalize_passage(ctx_text: str):
     return ctx_text
 
 
-def take_max_roberta_paragraphs(ctx_text, tokenizer, tok_space = 400, tok_max = 402):
-    paragraphs = ctx_text.split('\n\n')
+def take_max_roberta_paragraphs(ctx_text, ctx_title, tokenizer, tok_space = 510, tok_max = 512):
+    title_tokens = tokenizer(ctx_title)['input_ids']
+    n_title_tok = len(title_tokens) - 2 + 1
+    tok_space -= n_title_tok
+    tok_max -= n_title_tok
+
+    paragraphs = ctx_text.lsplit('\n')
+    paragraphs = paragraphs.split('\n\n')
     returned_paragraphs = []
     for paragraph in paragraphs:
         para_tokens = tokenizer(paragraph)['input_ids']
-        n_tok = len(para_tokens) - 2 + 1
-        tok_space -= n_tok
+        n_pass_tok = len(para_tokens) - 2 + 1
+        tok_space -= n_pass_tok
         if tok_space <= 0 and len(returned_paragraphs) == 0:
             return tokenizer.decode(para_tokens[1:tok_max])
         elif tok_space <= 0:

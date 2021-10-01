@@ -432,7 +432,7 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
                     if self.normalize:
                         title = normalize_passage(title)
                         title = title.lower()
-                        passage = take_max_roberta_paragraphs(passage, tokenizer)
+                        passage = take_max_roberta_paragraphs(passage, title, tokenizer)
                         passage = normalize_passage(passage)
                     ctxs[uid] = BiEncoderPassage(passage, title)
 
