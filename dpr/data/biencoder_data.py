@@ -286,7 +286,8 @@ def take_max_roberta_paragraphs(ctx_text, ctx_title, tokenizer, tok_space = 510,
     tok_space -= n_title_tok
     tok_max -= n_title_tok
 
-    paragraphs = ctx_text.lstrip('\n')
+    paragraphs = ctx_text.lstrip(' ')
+    paragraphs = paragraphs.lstrip('\n')
     paragraphs = paragraphs.split('\n\n')
     returned_paragraphs = []
     for paragraph in paragraphs:
