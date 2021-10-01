@@ -227,8 +227,8 @@ def save_results(
                     "ctxs": [
                         {
                             "id": results_and_scores[0][c],
-                            "title": docs[c][1],
-                            "text": docs[c][0],
+                            "embedded_title": docs[c][1],
+                            "embedded_text": docs[c][0],
                             "score": scores[c],
                         }
                         for c in strata_range
@@ -239,22 +239,6 @@ def save_results(
             with open(f"{out_file}/strata_{l}_{i}.json", "w") as writer:
                 writer.write(json.dumps(merged_data, indent=4) + "\n")
             logger.info("Saved results * scores  to %s", f"{out_file}/strata_{l}_{i}.json")
-
-    # Output separate json with a list of all scores
-    all_scores = []
-    for i, q in enumerate(questions):
-        results_and_scores = top_passages_and_scores[i]
-        hits = per_question_hits[i]
-        scores = [str(score) for score in results_and_scores[1]]
-        ctxs_num = len(hits)
-
-        for c in range(ctxs_num):
-            all_scores.append(scores[c])
-
-    with open(f"{out_file}/scores.json", "w") as writer:
-        writer.write(json.dumps(all_scores))
-    logger.info("Saved all scores to %s", f"{out_file}/scores.json")
-
 
 
 def iterate_encoded_files(
