@@ -11,8 +11,8 @@ import simplejson
 
 from dpr.utils.qualitycheckingfunctions import *
 
-path_pattern = '/mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1969_faro_lr4/**/ocr_*'
-save_dir = '/mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1969_full/'
+path_pattern = '/mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1970_faro_lr4/**/ocr_*'
+save_dir = '/mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1970_full/'
 spell_dict = load_lowercase_spell_dict('/mnt/data02/retrieval/preprocess/hunspell_word_dict_lower')
 
 #path_pattern = 'C:/Users/Emily/Downloads/all_scans_dbx_text_files_1968_faro/**/ocr_*'

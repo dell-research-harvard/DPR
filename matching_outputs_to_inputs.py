@@ -55,6 +55,7 @@ for path in tqdm(glob.glob(retrieved_data)):
     with open(path, 'rb') as f:
         strata = json.load(f)
         new_strata = []
+        strata_num = path.split('\\')[-1:]
 
         articles = strata[0]['ctxs']
 
@@ -77,6 +78,7 @@ for path in tqdm(glob.glob(retrieved_data)):
                           "full_article": full_articles[index],
                           "bbox": bboxs[index],
                           "full_article_id": full_article_ids[index],
+                          "strata": strata_num
                       }
                       }
             if random_sample:
