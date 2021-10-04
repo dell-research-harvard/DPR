@@ -16,7 +16,7 @@ def get_paper_name(file_end):
     return "-".join(file_end.split("-")[1:-5])
 
 
-n_random_papers = 100
+n_random_papers = 50
 path_pattern = '/mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1969_full/**/ocr_*'
 
 # Create list of file names
