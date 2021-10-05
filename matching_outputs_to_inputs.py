@@ -15,9 +15,9 @@ import random
 n_per_strata = 50
 random_sample = True
 
-original_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/100_full_paper_samp_full_210929/*'
-retrieved_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/newspapers211001b_test/*'
-save_dir = 'C:/Users/Emily/Documents/Predoc/Newspapers/matched_retriever_output/'
+original_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/BarbS/inputs/*'
+retrieved_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/BarbS/q4_test/*'
+save_dir = 'C:/Users/Emily/Documents/Predoc/Newspapers/Barbs/Labelling/'
 
 # original_data = '/mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full_210929/'
 # retrieved_data = '/mnt/data02/retrieval/retrieval_test/test_results/newspapers211001b'
@@ -95,5 +95,5 @@ for path in tqdm(glob.glob(retrieved_data)):
                 writer.write(simplejson.dumps(new_strata, indent=4) + "\n")
 
 if random_sample:
-    with open(f'{save_dir}/sample_for_labelling_top_strata.json', 'w') as writer:
+    with open(f'{save_dir}/sample_for_labelling_q4.json', 'w') as writer:
         writer.write(simplejson.dumps(sample, indent=4) + "\n")
