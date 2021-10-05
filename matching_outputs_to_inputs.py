@@ -14,6 +14,7 @@ import random
 
 n_per_strata = 50
 random_sample = True
+top_0_1 = True
 
 original_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/BarbS/inputs/*'
 retrieved_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/BarbS/q4_test/*'
@@ -54,10 +55,14 @@ if random_sample:
 for path in tqdm(glob.glob(retrieved_data)):
     with open(path, 'rb') as f:
         strata = json.load(f)
+
         new_strata = []
         strata_num = path.split('\\')[-1:]
 
         articles = strata[0]['ctxs']
+
+        if top_0_1:
+            articles = strata[0]['ctxs'][:50]
 
         if random_sample:
             articles = random.sample(articles, n_per_strata)
@@ -95,5 +100,5 @@ for path in tqdm(glob.glob(retrieved_data)):
                 writer.write(simplejson.dumps(new_strata, indent=4) + "\n")
 
 if random_sample:
-    with open(f'{save_dir}/sample_for_labelling_q4.json', 'w') as writer:
+    with open(f'{save_dir}/sample_for_labelling_q4_top50.json', 'w') as writer:
         writer.write(simplejson.dumps(sample, indent=4) + "\n")
