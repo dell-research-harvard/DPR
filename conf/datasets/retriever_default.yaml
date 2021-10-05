@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: This example is about the Senator Gaylord Nelson pill hearings. #This example is about the Vietnam war.
+  question: This example is about the Doctors' case against the pill. #This example is about the Vietnam war.
   answer: No answer by design.
   id: 0
