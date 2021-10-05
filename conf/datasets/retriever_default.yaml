@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: This example is about the Vietnam war.
+  question: This example is about Barbara Seaman. #This example is about the Vietnam war.
   answer: No answer by design.
   id: 0
