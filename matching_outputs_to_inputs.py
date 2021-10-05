@@ -12,11 +12,11 @@ import simplejson
 import os
 import random
 
-n_per_strata = 5
+n_per_strata = 50
 random_sample = True
 
 original_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/100_full_paper_samp_full_210929/*'
-retrieved_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/newspapers211001b/*'
+retrieved_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/newspapers211001b_test/*'
 save_dir = 'C:/Users/Emily/Documents/Predoc/Newspapers/matched_retriever_output/'
 
 # original_data = '/mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full_210929/'
@@ -95,5 +95,5 @@ for path in tqdm(glob.glob(retrieved_data)):
                 writer.write(simplejson.dumps(new_strata, indent=4) + "\n")
 
 if random_sample:
-    with open(f'{save_dir}/sample_for_labelling.json', 'w') as writer:
+    with open(f'{save_dir}/sample_for_labelling_top_strata.json', 'w') as writer:
         writer.write(simplejson.dumps(sample, indent=4) + "\n")

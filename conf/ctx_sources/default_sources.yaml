@@ -19,7 +19,7 @@ newspaper_archive:
 
 newspaper_archive_heads:
   _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc_heads
-  path_pattern: /mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full_210929/*
+  path_pattern: /mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full_BS/* #/mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full_210929/*
   normalize: True
 
 mnli_dev:
