@@ -1,6 +1,6 @@
-**d**# Dense Passage Retrieval
+# Dense Passage Retrieval
 
-Dense Passage Retrieval (DPR) - was originally a set of tools and models for Q&A research.
+Dense Passage Retrieval (DPR) was originally a set of tools and models for Q&A research.
 - Based on the following paper: Vladimir Karpukhin, Barlas Oğuz, Sewon Min, Patrick Lewis, Ledell Wu, Sergey Edunov, Danqi Chen, Wen-tau Yih, [Dense Passage Retrieval for Open-Domain Question Answering](https://arxiv.org/abs/2004.04906), Preprint 2020.
 - The [original repo](https://github.com/facebookresearch/DPR) includes comprehensive documentation. 
 
