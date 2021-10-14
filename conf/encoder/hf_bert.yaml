@@ -4,7 +4,7 @@
 encoder_model_type: hf_bert
 
 # HuggingFace's config name for model initialization
-pretrained_model_cfg: facebook/bart-large-mnli #distilroberta-base
+pretrained_model_cfg: facebook/bart-large #facebook/bart-large-mnli #distilroberta-base
 
 # Some encoders need to be initialized from a file
 pretrained_file:

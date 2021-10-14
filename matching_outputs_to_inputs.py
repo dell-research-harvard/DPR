@@ -11,15 +11,24 @@ import ijson
 import simplejson
 import os
 import random
+import re
 
-n_per_strata = 50
-random_sample = True
-top_0_1 = True
+n_per_strata = 20
+random_sample = False
+top_0_1 = False
 
-original_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/BarbS/inputs/*'
-retrieved_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/BarbS/q4_test/*'
-save_dir = 'C:/Users/Emily/Documents/Predoc/Newspapers/Barbs/Labelling/'
 
+# Vietnam on Emily
+original_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/100_full_paper_samp_full_210929/*'
+retrieved_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/newspapers211001b/strata_0_0.json'
+save_dir = 'C:/Users/Emily/Documents/Predoc/Newspapers/matched_retriever_output/'
+
+# BarbS on Emily
+# original_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/BarbS/inputs/*'
+# retrieved_data = 'C:/Users/Emily/Documents/Predoc/Newspapers/BarbS/q4/*'
+# save_dir = 'C:/Users/Emily/Documents/Predoc/Newspapers/Barbs/Labelling/'
+
+# Vietnam on Guppy
 # original_data = '/mnt/data02/retrieval/retrieval_test/100_full_paper_samp_full_210929/'
 # retrieved_data = '/mnt/data02/retrieval/retrieval_test/test_results/newspapers211001b'
 # save_dir = '/mnt/data02/retrieval/retrieval_test/matched_retriever_output/'
@@ -49,8 +58,8 @@ for path in tqdm(glob.glob(original_data)):
                 full_article_ids.append(v[i]['full_article_id'])
 
 # match to retrieved data
-if random_sample:
-    sample = []
+# if random_sample:
+sample = []
 
 for path in tqdm(glob.glob(retrieved_data)):
     with open(path, 'rb') as f:
@@ -62,12 +71,15 @@ for path in tqdm(glob.glob(retrieved_data)):
         articles = strata[0]['ctxs']
 
         if top_0_1:
-            articles = strata[0]['ctxs'][:50]
+            articles = strata[0]['ctxs'][:860]
 
         if random_sample:
             articles = random.sample(articles, n_per_strata)
 
         for art in articles:
+            #if not re.search("Jan-\d\d-1970", art['id']):
+            #    continue
+
             index = ids.index(art['id'])
 
             # Match and format for label studio
@@ -86,19 +98,20 @@ for path in tqdm(glob.glob(retrieved_data)):
                           "strata": strata_num
                       }
                       }
-            if random_sample:
-                sample.append(ls_art)
-            else:
-                new_strata.append(ls_art)
+            # if random_sample:
+            #     sample.append(ls_art)
+            # else:
+            #     new_strata.append(ls_art)
+            sample.append(ls_art)
 
-        if not random_sample:
-            os.makedirs(save_dir, exist_ok=True)
-            save_end = path.split('\\')[-1:]                                                                           # might need changing for Guppy
-            save_path = os.path.join(save_dir, save_end[0])
+        # if not random_sample:
+        #     os.makedirs(save_dir, exist_ok=True)
+        #     save_end = path.split('\\')[-1:]                                                                           # might need changing for Guppy
+        #     save_path = os.path.join(save_dir, save_end[0])
+        #
+        #     with open(save_path, "w") as writer:
+        #         writer.write(simplejson.dumps(new_strata, indent=4) + "\n")
 
-            with open(save_path, "w") as writer:
-                writer.write(simplejson.dumps(new_strata, indent=4) + "\n")
-
-if random_sample:
-    with open(f'{save_dir}/sample_for_labelling_q4_top50.json', 'w') as writer:
+# if random_sample:
+    with open(f'{save_dir}/sample_for_ZSC_sentiment.json', 'w') as writer:
         writer.write(simplejson.dumps(sample, indent=4) + "\n")
