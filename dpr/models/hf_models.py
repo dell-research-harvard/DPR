@@ -17,7 +17,7 @@ import torch
 from torch import Tensor as T
 from torch import nn
 # from transformers.modeling_bert import BertConfig, BertModel
-from transformers import AutoConfig, AutoModel, BertConfig, BertModel, AutoTokenizer, BertTokenizer, RobertaTokenizer, RobertaModel
+from transformers import AutoConfig, AutoModel, BertConfig, BertModel, AutoTokenizer, BertTokenizer, RobertaTokenizer, RobertaModel, BartTokenizer, BartModel
 from transformers.optimization import AdamW
 # from transformers.tokenization_bert import BertTokenizer
 # from transformers.tokenization_roberta import RobertaTokenizer
@@ -182,7 +182,7 @@ def get_roberta_tokenizer(pretrained_cfg_name: str, do_lower_case: bool = True):
     )
 
 
-class HFBertEncoder(RobertaModel):
+class HFBertEncoder(BartModel):
     def __init__(self, config, project_dim: int = 0):
         super().__init__(config)
         assert config.hidden_size > 0, "Encoder hidden_size can't be zero"
