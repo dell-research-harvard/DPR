@@ -30,8 +30,8 @@ squad1_dev:
 
 custom_train:
   _target_: dpr.data.biencoder_data.CustomJsonQADataset
-  file_path: /mnt/data01/mnli_for_dpr.json
+  file_path: /mnt/data01/jsons/mnli_for_dpr.json
 
 custom_dev:
   _target_: dpr.data.biencoder_data.CustomJsonQADataset
-  file_path: /mnt/data01/mnli_for_dpr_dev.json
+  file_path: /mnt/data01/jsons/mnli_for_dpr_dev.json
