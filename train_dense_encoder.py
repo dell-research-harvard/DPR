@@ -17,6 +17,7 @@ import random
 import sys
 import time
 from typing import Tuple
+import subprocess
 
 import hydra
 import torch
@@ -78,6 +79,8 @@ class BiEncoderTrainer(object):
         tensorizer, model, optimizer = init_biencoder_components(
             cfg.encoder.encoder_model_type, cfg
         )
+
+        show_gpu('A:')
 
         model, optimizer = setup_for_distributed_mode(
             model,
@@ -199,6 +202,8 @@ class BiEncoderTrainer(object):
         eval_step = math.ceil(updates_per_epoch / cfg.train.eval_per_epoch)
         logger.info("  Eval step = %d", eval_step)
         logger.info("***** Training *****")
+
+        show_gpu('B:')
 
         for epoch in range(self.start_epoch, int(cfg.train.num_train_epochs)):
             logger.info("***** Epoch %d *****", epoch)
@@ -782,6 +787,24 @@ def _do_biencoder_fwd_pass(
     if cfg.train.gradient_accumulation_steps > 1:
         loss = loss / cfg.gradient_accumulation_steps
     return loss, is_correct
+
+
+def show_gpu(msg):
+    """
+    ref: https://discuss.pytorch.org/t/access-gpu-memory-usage-in-pytorch/3192/4
+    """
+    def query(field):
+        return(subprocess.check_output(
+            ['nvidia-smi', f'--query-gpu={field}',
+             '--format=csv,nounits,noheader'],
+            encoding='utf-8'))
+    def to_int(result):
+        return int(result.strip().split('\n')[0])
+
+    used = to_int(query('memory.used'))
+    total = to_int(query('memory.total'))
+    pct = used/total
+    print('\n' + msg, f'{100*pct:2.1f}% ({used} out of {total})')
 
 
 @hydra.main(config_path="conf", config_name="biencoder_train_cfg")
