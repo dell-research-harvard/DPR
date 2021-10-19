@@ -615,7 +615,6 @@ class BiEncoderTrainer(object):
 
 
             # Workaround
-
             del selector
             gc.collect()
             torch.cuda.empty_cache()
