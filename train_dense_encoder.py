@@ -520,8 +520,6 @@ class BiEncoderTrainer(object):
                 query_token=special_token,
             )
 
-            show_gpu('F:')
-
             # get the token to be used for representation selection
             from dpr.data.biencoder_data import DEFAULT_SELECTOR
 
@@ -603,7 +601,10 @@ class BiEncoderTrainer(object):
                 )
                 self.biencoder.train()
 
-        logger.info("Epoch finished on %d", cfg.local_rank)
+            show_gpu('F:')
+
+
+    logger.info("Epoch finished on %d", cfg.local_rank)
         self.validate_and_save(epoch, data_iteration, scheduler)
 
         epoch_loss = (epoch_loss / epoch_batches) if epoch_batches > 0 else 0
