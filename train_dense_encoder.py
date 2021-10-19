@@ -18,6 +18,7 @@ import sys
 import time
 from typing import Tuple
 import subprocess
+import gc
 
 import hydra
 import torch
@@ -603,7 +604,15 @@ class BiEncoderTrainer(object):
 
             show_gpu('F:')
 
-        logger.info("Epoch finished on %d", cfg.local_rank)
+            # Workaround
+            gc.collect()
+            torch.cuda.empty_cache()
+
+            show_gpu('G:')
+
+
+
+    logger.info("Epoch finished on %d", cfg.local_rank)
         self.validate_and_save(epoch, data_iteration, scheduler)
 
         epoch_loss = (epoch_loss / epoch_batches) if epoch_batches > 0 else 0
