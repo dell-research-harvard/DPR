@@ -498,15 +498,19 @@ class BiEncoderTrainer(object):
                 samples_batch, dataset = samples_batch
 
             show_gpu('D:')
+            print_gpu_obj()
 
-            ds_cfg = self.ds_cfg.train_datasets[dataset]
+
+        ds_cfg = self.ds_cfg.train_datasets[dataset]
             special_token = ds_cfg.special_token
             encoder_type = ds_cfg.encoder_type
             shuffle_positives = ds_cfg.shuffle_positives
 
             show_gpu('E:')
+            print_gpu_obj()
 
-            # to be able to resume shuffled ctx- pools
+
+        # to be able to resume shuffled ctx- pools
             data_iteration = train_data_iterator.get_iteration()
             random.seed(seed + epoch + data_iteration)
 
@@ -603,8 +607,12 @@ class BiEncoderTrainer(object):
                 self.biencoder.train()
 
             show_gpu('F:')
+            print_gpu_obj()
+
 
             # Workaround
+
+
             gc.collect()
             torch.cuda.empty_cache()
 
