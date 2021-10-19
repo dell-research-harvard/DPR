@@ -598,14 +598,10 @@ class BiEncoderTrainer(object):
                 self.biencoder.train()
 
             # Workaround
-            # del selector, dataset, data_iteration, biencoder_batch, loss, correct_cnt, samples_batch, ds_cfg, special_token, encoder_type, shuffle_positives, rep_positions, loss_scale
             gc.collect()
             torch.cuda.empty_cache()
 
             show_gpu('L:')
-
-
-
 
         logger.info("Epoch finished on %d", cfg.local_rank)
         self.validate_and_save(epoch, data_iteration, scheduler)
@@ -800,11 +796,6 @@ def _do_biencoder_fwd_pass(
         loss = loss.mean()
     if cfg.train.gradient_accumulation_steps > 1:
         loss = loss / cfg.gradient_accumulation_steps
-
-    # Workaround
-    del input, q_attn_mask, ctx_attn_mask, model_out, local_q_vector, local_ctx_vectors, loss_function
-    gc.collect()
-    torch.cuda.empty_cache()
 
     return loss, is_correct
 
