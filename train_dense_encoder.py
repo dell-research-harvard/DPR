@@ -609,6 +609,7 @@ class BiEncoderTrainer(object):
             torch.cuda.empty_cache()
 
             show_gpu('G:')
+            print_gpu_obj()
 
 
 
@@ -824,6 +825,21 @@ def show_gpu(msg):
     total = to_int(query('memory.total'))
     pct = used/total
     print('\n' + msg, f'{100*pct:2.1f}% ({used} out of {total})')
+
+
+def print_gpu_obj():
+    count = 0
+    for tracked_object in gc.get_objects():
+        if torch.is_tensor(tracked_object):
+            if tracked_object.is_cuda:
+                count+=1
+                print("{} {} {}".format(
+                    type(tracked_object.__name__,
+                  " pinned" if tracked_object.is_pinned() else "",
+                    tracked_object.shape
+                    ))
+    print(f'\nTHERE ARE {count} OBJECTS ON GPU')
+
 
 
 @hydra.main(config_path="conf", config_name="biencoder_train_cfg")
