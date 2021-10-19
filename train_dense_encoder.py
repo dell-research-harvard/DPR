@@ -598,12 +598,12 @@ class BiEncoderTrainer(object):
                 self.biencoder.train()
 
             # Workaround
-            del selector, dataset, data_iteration, biencoder_batch, loss, correct_cnt, samples_batch, ds_cfg, special_token, encoder_type, shuffle_positives, rep_positions, loss_scale
+            # del selector, dataset, data_iteration, biencoder_batch, loss, correct_cnt, samples_batch, ds_cfg, special_token, encoder_type, shuffle_positives, rep_positions, loss_scale
             gc.collect()
             torch.cuda.empty_cache()
 
             show_gpu('L:')
-            print_gpu_obj()
+
 
 
 
