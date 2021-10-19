@@ -802,7 +802,7 @@ def _do_biencoder_fwd_pass(
         loss = loss / cfg.gradient_accumulation_steps
 
     # Workaround
-    del model_out
+    del model_out, local_q_vector, local_ctx_vectors, loss_function
     gc.collect()
     torch.cuda.empty_cache()
 
