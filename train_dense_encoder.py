@@ -485,6 +485,10 @@ class BiEncoderTrainer(object):
         epoch_batches = train_data_iterator.max_iterations
         data_iteration = 0
 
+        show_gpu('C:')
+
+
+
         dataset = 0
         for i, samples_batch in enumerate(
             train_data_iterator.iterate_ds_data(epoch=epoch)
@@ -492,10 +496,14 @@ class BiEncoderTrainer(object):
             if isinstance(samples_batch, Tuple):
                 samples_batch, dataset = samples_batch
 
+            show_gpu('D:')
+
             ds_cfg = self.ds_cfg.train_datasets[dataset]
             special_token = ds_cfg.special_token
             encoder_type = ds_cfg.encoder_type
             shuffle_positives = ds_cfg.shuffle_positives
+
+            show_gpu('E:')
 
             # to be able to resume shuffled ctx- pools
             data_iteration = train_data_iterator.get_iteration()
