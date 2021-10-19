@@ -531,7 +531,7 @@ class BiEncoderTrainer(object):
 
             selector = ds_cfg.selector if ds_cfg else DEFAULT_SELECTOR
 
-            show_gpu('F:')
+            show_gpu('G:')
             print_gpu_obj()
 
             rep_positions = selector.get_positions(
@@ -610,12 +610,12 @@ class BiEncoderTrainer(object):
                 )
                 self.biencoder.train()
 
-            show_gpu('F:')
+            show_gpu('H:')
             print_gpu_obj()
 
 
             # Workaround
-            del selector
+            del selector, dataset, data_iteration, biencoder_batch
             gc.collect()
             torch.cuda.empty_cache()
 
