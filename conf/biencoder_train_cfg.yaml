@@ -8,7 +8,7 @@ defaults:
 train_datasets:
 dev_datasets:
 output_dir:
-train_sampling_rates: [1]
+train_sampling_rates:
 loss_scale_factors:
 
 # Whether to lower case the input text. Set True for uncased models, False for the cased ones.
