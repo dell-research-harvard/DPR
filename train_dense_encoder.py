@@ -522,10 +522,17 @@ class BiEncoderTrainer(object):
                 query_token=special_token,
             )
 
+
+            show_gpu('F:')
+            print_gpu_obj()
+
             # get the token to be used for representation selection
             from dpr.data.biencoder_data import DEFAULT_SELECTOR
 
             selector = ds_cfg.selector if ds_cfg else DEFAULT_SELECTOR
+
+            show_gpu('F:')
+            print_gpu_obj()
 
             rep_positions = selector.get_positions(
                 biencoder_batch.question_ids, self.tensorizer
@@ -609,7 +616,7 @@ class BiEncoderTrainer(object):
 
             # Workaround
 
-
+            del selector
             gc.collect()
             torch.cuda.empty_cache()
 
