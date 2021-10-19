@@ -538,9 +538,17 @@ class BiEncoderTrainer(object):
                 biencoder_batch.question_ids, self.tensorizer
             )
 
+            show_gpu('H:')
+            print_gpu_obj()
+
+
             loss_scale = (
                 cfg.loss_scale_factors[dataset] if cfg.loss_scale_factors else None
             )
+
+            show_gpu('I:')
+            print_gpu_obj()
+
             loss, correct_cnt = _do_biencoder_fwd_pass(
                 self.biencoder,
                 biencoder_batch,
@@ -550,6 +558,9 @@ class BiEncoderTrainer(object):
                 rep_positions=rep_positions,
                 loss_scale=loss_scale,
             )
+
+            show_gpu('J:')
+            print_gpu_obj()
 
             epoch_correct_predictions += correct_cnt
             epoch_loss += loss.item()
@@ -610,7 +621,7 @@ class BiEncoderTrainer(object):
                 )
                 self.biencoder.train()
 
-            show_gpu('H:')
+            show_gpu('K:')
             print_gpu_obj()
 
 
@@ -619,7 +630,7 @@ class BiEncoderTrainer(object):
             gc.collect()
             torch.cuda.empty_cache()
 
-            show_gpu('G:')
+            show_gpu('L:')
             print_gpu_obj()
 
 
