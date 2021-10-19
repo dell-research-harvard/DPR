@@ -612,7 +612,7 @@ class BiEncoderTrainer(object):
 
 
 
-    logger.info("Epoch finished on %d", cfg.local_rank)
+        logger.info("Epoch finished on %d", cfg.local_rank)
         self.validate_and_save(epoch, data_iteration, scheduler)
 
         epoch_loss = (epoch_loss / epoch_batches) if epoch_batches > 0 else 0
