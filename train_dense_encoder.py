@@ -626,7 +626,7 @@ class BiEncoderTrainer(object):
 
 
             # Workaround
-            del selector, dataset, data_iteration, biencoder_batch
+            del selector, dataset, data_iteration, biencoder_batch, loss, correct_cnt
             gc.collect()
             torch.cuda.empty_cache()
 
