@@ -833,13 +833,7 @@ def print_gpu_obj():
         if torch.is_tensor(tracked_object):
             if tracked_object.is_cuda:
                 count+=1
-                print("{} {} {}".format(
-                    type(tracked_object.__name__,
-                  " pinned" if tracked_object.is_pinned() else "",
-                    tracked_object.shape
-                    ))
     print(f'\nTHERE ARE {count} OBJECTS ON GPU')
-
 
 
 @hydra.main(config_path="conf", config_name="biencoder_train_cfg")
