@@ -781,8 +781,14 @@ def _do_biencoder_fwd_pass(
 
     input = BiEncoderBatch(**move_to_device(input._asdict(), cfg.device))
 
+    show_gpu('i1:')
+    print_gpu_obj()
+
     q_attn_mask = tensorizer.get_attn_mask(input.question_ids)
     ctx_attn_mask = tensorizer.get_attn_mask(input.context_ids)
+
+    show_gpu('i2:')
+    print_gpu_obj()
 
     if model.training:
         model_out = model(
@@ -808,9 +814,18 @@ def _do_biencoder_fwd_pass(
                 representation_token_pos=rep_positions,
             )
 
+    show_gpu('i3:')
+    print_gpu_obj()
+
     local_q_vector, local_ctx_vectors = model_out
 
+    show_gpu('i4:')
+    print_gpu_obj()
+
     loss_function = BiEncoderNllLoss()
+
+    show_gpu('i5:')
+    print_gpu_obj()
 
     loss, is_correct = _calc_loss(
         cfg,
@@ -822,12 +837,19 @@ def _do_biencoder_fwd_pass(
         loss_scale=loss_scale,
     )
 
+    show_gpu('i6:')
+    print_gpu_obj()
+
     is_correct = is_correct.sum().item()
 
     if cfg.n_gpu > 1:
         loss = loss.mean()
     if cfg.train.gradient_accumulation_steps > 1:
         loss = loss / cfg.gradient_accumulation_steps
+
+    show_gpu('i7:')
+    print_gpu_obj()
+
     return loss, is_correct
 
 
