@@ -132,7 +132,7 @@ class BiEncoderTrainer(object):
         # randomized data loading to avoid file system congestion
         datasets_list = [ds for ds in hydra_datasets]
 
-        print(datasets_list)
+        print("DATASETS: ", datasets_list)
 
         rnd = random.Random(rank)
         rnd.shuffle(datasets_list)
