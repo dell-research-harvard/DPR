@@ -81,8 +81,6 @@ class BiEncoderTrainer(object):
             cfg.encoder.encoder_model_type, cfg
         )
 
-        show_gpu('A:')
-
         model, optimizer = setup_for_distributed_mode(
             model,
             optimizer,
@@ -203,8 +201,6 @@ class BiEncoderTrainer(object):
         eval_step = math.ceil(updates_per_epoch / cfg.train.eval_per_epoch)
         logger.info("  Eval step = %d", eval_step)
         logger.info("***** Training *****")
-
-        show_gpu('B:')
 
         for epoch in range(self.start_epoch, int(cfg.train.num_train_epochs)):
             logger.info("***** Epoch %d *****", epoch)
@@ -486,9 +482,6 @@ class BiEncoderTrainer(object):
         epoch_batches = train_data_iterator.max_iterations
         data_iteration = 0
 
-        show_gpu('C:')
-        print_gpu_obj()
-
         dataset = 0
         for i, samples_batch in enumerate(
             train_data_iterator.iterate_ds_data(epoch=epoch)
@@ -496,16 +489,10 @@ class BiEncoderTrainer(object):
             if isinstance(samples_batch, Tuple):
                 samples_batch, dataset = samples_batch
 
-            show_gpu('D:')
-            print_gpu_obj()
-
             ds_cfg = self.ds_cfg.train_datasets[dataset]
             special_token = ds_cfg.special_token
             encoder_type = ds_cfg.encoder_type
             shuffle_positives = ds_cfg.shuffle_positives
-
-            show_gpu('E:')
-            print_gpu_obj()
 
             # to be able to resume shuffled ctx- pools
             data_iteration = train_data_iterator.get_iteration()
@@ -522,25 +509,14 @@ class BiEncoderTrainer(object):
                 query_token=special_token,
             )
 
-
-            show_gpu('F:')
-            print_gpu_obj()
-
             # get the token to be used for representation selection
             from dpr.data.biencoder_data import DEFAULT_SELECTOR
 
             selector = ds_cfg.selector if ds_cfg else DEFAULT_SELECTOR
 
-            show_gpu('G:')
-            print_gpu_obj()
-
             rep_positions = selector.get_positions(
                 biencoder_batch.question_ids, self.tensorizer
             )
-
-            show_gpu('H:')
-            print_gpu_obj()
-
 
             loss_scale = (
                 cfg.loss_scale_factors[dataset] if cfg.loss_scale_factors else None
@@ -620,10 +596,6 @@ class BiEncoderTrainer(object):
                     epoch, train_data_iterator.get_iteration(), scheduler
                 )
                 self.biencoder.train()
-
-            show_gpu('K:')
-            print_gpu_obj()
-
 
             # Workaround
             del selector, dataset, data_iteration, biencoder_batch, loss, correct_cnt
@@ -781,14 +753,8 @@ def _do_biencoder_fwd_pass(
 
     input = BiEncoderBatch(**move_to_device(input._asdict(), cfg.device))
 
-    show_gpu('i1:')
-    print_gpu_obj()
-
     q_attn_mask = tensorizer.get_attn_mask(input.question_ids)
     ctx_attn_mask = tensorizer.get_attn_mask(input.context_ids)
-
-    show_gpu('i2:')
-    print_gpu_obj()
 
     if model.training:
         model_out = model(
@@ -814,18 +780,9 @@ def _do_biencoder_fwd_pass(
                 representation_token_pos=rep_positions,
             )
 
-    show_gpu('i3:')
-    print_gpu_obj()
-
     local_q_vector, local_ctx_vectors = model_out
 
-    show_gpu('i4:')
-    print_gpu_obj()
-
     loss_function = BiEncoderNllLoss()
-
-    show_gpu('i5:')
-    print_gpu_obj()
 
     loss, is_correct = _calc_loss(
         cfg,
@@ -837,9 +794,6 @@ def _do_biencoder_fwd_pass(
         loss_scale=loss_scale,
     )
 
-    show_gpu('i6:')
-    print_gpu_obj()
-
     is_correct = is_correct.sum().item()
 
     if cfg.n_gpu > 1:
@@ -847,8 +801,10 @@ def _do_biencoder_fwd_pass(
     if cfg.train.gradient_accumulation_steps > 1:
         loss = loss / cfg.gradient_accumulation_steps
 
-    show_gpu('i7:')
-    print_gpu_obj()
+    # Workaround
+    del model_out
+    gc.collect()
+    torch.cuda.empty_cache()
 
     return loss, is_correct
 
