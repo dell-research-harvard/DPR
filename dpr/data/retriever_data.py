@@ -496,10 +496,10 @@ class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
 
         print("Gathering data from solr...")
         # Create solr output object
-        db = DBSolr(port=solr_port, core_name=solr_core_name)
+        db = DBSolr(port=self.solr_port, core_name=self.solr_core_name)
 
         query_list = []
-        for year in years:
+        for year in self.years:
             query = f'image_file_name:"-{year}"'
             query_list.append(query)
         search_term = " OR ".join(query_list)
