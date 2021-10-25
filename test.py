@@ -51,7 +51,9 @@ if __name__ == '__main__':
     db = DBSolr(port=solr_port, core_name=solr_core_name)
 
     # assemble OCR data from cold pipeline output
-    db.gather_ocr_texts_and_metadata(query='image_file_name:"-1968"')
+    #db.gather_ocr_texts_and_metadata(query='image_file_name:"-1968"')
+    db.gather_ocr_texts_and_metadata(query='article:"senate" AND (article:"pill" OR article:"oral" OR '
+                                           'article:"contracepti") AND image_file_name:"-1968"')
 
     print(db.ocr_article_faids)
 
