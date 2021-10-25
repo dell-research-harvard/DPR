@@ -194,11 +194,9 @@ class BiEncoderTrainer(object):
                 steps_shift=shift,
             )
         else:
-            scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=30, gamma=0.1)
-
-            #scheduler = get_schedule_linear(
-            #    self.optimizer, warmup_steps, total_updates
-            #)
+            scheduler = get_schedule_linear(
+                self.optimizer, warmup_steps, total_updates
+            )
 
         eval_step = math.ceil(updates_per_epoch / cfg.train.eval_per_epoch)
         logger.info("  Eval step = %d", eval_step)
