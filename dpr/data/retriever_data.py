@@ -442,48 +442,109 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
             yield (ik['headline'], ik['article'], ik['id'])
 
 
+class DBSolr:
+    """Class for managing Solr database of pipeline outputs"""
+
+    def __init__(self, port, core_name):
+        """Set up Solr client"""
+
+        self.solr = pysolr.Solr(f'http://localhost:{port}/solr/{core_name}/', always_commit=True)
+
+    def gather_ocr_texts_and_metadata(self, query):
+        """Extract OCR article texts and metadata from Solr database via search"""
+
+        ids = []
+        articles = []
+        headlines = []
+
+        self.solr.ping()
+        print("Gathering results of Solr search...")
+        for doc in tqdm(self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')):
+            ids.append(doc['id'])
+            articles.extend(doc['article'])
+            if 'headline' in doc:
+                headlines.append(doc['headline'][0])
+            else:
+                headlines.append("")
+
+        assert len(ids) == len(articles) == len(headlines)
+
+        self.ids = ids
+        self.articles = articles
+        self.headlines = headlines
+
+
 class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
     def __init__(
             self,
-            path_pattern: str,
+            solr_port: int,
+            solr_core_name: str,
+            years: list = [],
             normalize: bool = False,
-            id_prefix: str = None,
+            n_random_papers: bool = False
     ):
+        self.solr_port = solr_port
+        self.solr_core_name = solr_core_name
+        self.years = years
         self.normalize = normalize
-        self.file_paths = glob.glob(path_pattern)
-        self.id_prefix = id_prefix
+        self.n_random_papers = n_random_papers
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
 
         from transformers import RobertaTokenizerFast
         tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
 
+        print("Gathering data from solr...")
+        # Create solr output object
+        db = DBSolr(port=solr_port, core_name=solr_core_name)
+
+        query_list = []
+        for year in years:
+            query = f'image_file_name:"-{year}"'
+            query_list.append(query)
+        search_term = " OR ".join(query_list)
+
+        # Gather data from solr
+        db.gather_ocr_texts_and_metadata(query=search_term)
+
+        if self.n_random_papers:
+            print("Random newspaper subset...")
+
+            papers = list(set([self.get_paper_name(scan) for scan in db.ids]))
+            papers.sort()
+            print(f"{len(papers)} total papers...")
+            print(papers)
+
+            random.seed(789)
+            random_papers = random.sample(papers, self.n_random_papers)
+            print(f"Selected random papers: {random_papers}")
+
         print("Creating bi-encoder dict...")
-        for file_path in tqdm(self.file_paths):
+        for i in range(len(db.ids)):
 
-            with open(file_path, 'rb') as f:
-                items = ijson.kvitems(f, '')
-                ocr_text_generators = []
-                for k, v in items:
-                    ocr_text_generators.append(self.ocr_text_iter(v))
+            if self.n_random_papers:
+                if self.get_paper_name(db.ids[i]) in random_papers:
+                    uid = db.ids[i]
+                    title = db.headlines[i]
+                    passage = db.articles[i]
+                else:
+                    continue
+            else:
+                uid = db.ids[i]
+                title = db.headlines[i]
+                passage = db.articles[i]
 
-            if len(ocr_text_generators) == 0:
-                continue
+            if self.normalize:
+                title = normalize_passage(title)
+                title = title.lower()
+                passage = take_max_roberta_paragraphs(passage, title, tokenizer)
+                passage = normalize_passage(passage)
 
-            for gen in ocr_text_generators:
-                for layobj in gen:
-                    title, passage, object_id = layobj
-                    uid = object_id
-                    if self.normalize:
-                        title = normalize_passage(title)
-                        title = title.lower()
-                        passage = take_max_roberta_paragraphs(passage, title, tokenizer)
-                        passage = normalize_passage(passage)
-                    ctxs[uid] = BiEncoderPassage(passage, title)
+            ctxs[uid] = BiEncoderPassage(passage, title)
 
-    def ocr_text_iter(self, v):
-        for ik in v:
-            yield (ik['headline'], ik['article'], ik['id'])
+    @staticmethod
+    def get_paper_name(image_file_name):
+        return "-".join(image_file_name.split("-")[1:-5])
 
 
 class MnliJsonlCtxSrc(RetrieverData):
