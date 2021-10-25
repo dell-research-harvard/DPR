@@ -479,7 +479,7 @@ class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
             self,
             solr_port: int,
             solr_core_name: str,
-            years: list = [],
+            years: list,
             normalize: bool = False,
             n_random_papers: bool = False
     ):

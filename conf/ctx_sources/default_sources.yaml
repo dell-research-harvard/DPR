@@ -28,7 +28,7 @@ newspaper_archive_heads_solr:
   solr_core_name: 'mytest2'
   solr_port: 8983
   normalize: True
-  n_random_paper: 100
+  n_random_papers: 100
 
 mnli_dev:
   _target_: dpr.data.retriever_data.MnliJsonlCtxSrc
