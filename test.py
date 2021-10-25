@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     # assemble OCR data from cold pipeline output
     #db.gather_ocr_texts_and_metadata(query='image_file_name:"-1968"')
-    db.gather_ocr_texts_and_metadata(query='article:"senate" AND (article:"pill" OR article:"oral" OR '                 # Random small search
+    db.gather_ocr_texts_and_metadata(query='headline:"senate" AND (article:"pill" OR article:"oral" OR '                 # Random small search
                                            'article:"contracepti") AND image_file_name:"-1968"')
 
     print(db.articles)
