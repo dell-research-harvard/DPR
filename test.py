@@ -103,6 +103,10 @@ class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
         #         passage = db.articles[i]
         #     ctxs[uid] = BiEncoderPassage(passage, title)
 
+    @staticmethod
+    def get_paper_name(image_file_name):
+        return "-".join(image_file_name.split("-")[1:-5])
+
 
 if __name__ == '__main__':
     solr_port = 8983
