@@ -32,22 +32,18 @@ class DBSolr:
         self.solr.ping()
         print("Gathering results of Solr search...")
         for doc in tqdm(self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')):
-            print(1)
+            ids.append(doc['id'])
+            articles.extend(doc['article'])
+            if 'headline' in doc:
+                headlines.append(doc['headline'][0])
+            else:
+                headlines.append("")
 
+        assert len(ids) == len(articles) == len(headlines)
 
-
-        #     ids.append(doc['id'])
-        #     articles.extend(doc['article'])
-        #     if 'headline' in doc:
-        #         headlines.append(doc['headline'][0])
-        #     else:
-        #         headlines.append("")
-        #
-        # assert len(ids) == len(articles) == len(headlines)
-        #
-        # self.ids = ids
-        # self.articles = articles
-        # self.headlines = headlines
+        self.ids = ids
+        self.articles = articles
+        self.headlines = headlines
 
 
 class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
@@ -141,3 +137,9 @@ if __name__ == '__main__':
     # Gather data from solr
     db.gather_ocr_texts_and_metadata(query=search_term)
 
+
+# create pipeline output object
+    ctx_class = NewspaperArchiveCtxSrc_heads_solr(solr_port, solr_core_name, years, True, n_random_papers)
+
+    ctxs = {}
+    ctx_class.load_data_to(ctxs)
