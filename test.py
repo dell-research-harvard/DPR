@@ -104,7 +104,7 @@ class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
                 passage = db.articles[i]
 
             if self.normalize:
-                title = normalize_passage(db.title)
+                title = normalize_passage(title)
                 title = title.lower()
                 passage = take_max_roberta_paragraphs(passage, title, tokenizer)
                 passage = normalize_passage(passage)
