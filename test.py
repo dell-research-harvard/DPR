@@ -20,7 +20,7 @@ class DBSolr:
         self.solr.ping()
         print("Gathering results of Solr search...")
         for doc in tqdm(self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')):
-            print(doc)
+            print(doc['id'])
             ids.extend(doc['id'])
             articles.extend(doc['article'])
             #headlines.extend(doc['headline'])
