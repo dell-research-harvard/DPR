@@ -91,28 +91,28 @@ class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
             random_papers = random.sample(papers, self.n_random_papers)
             print(f"Selected random papers: {random_papers}")
 
-        print("Creating bi-encoder dict...")
-        for i in range(len(db.ids)):
-
-            if self.n_random_papers:
-                if self.get_paper_name(db.ids[i]) in random_papers:
-                    uid = db.ids[i]
-                    title = db.headlines[i]
-                    passage = db.articles[i]
-                else:
-                    continue
-            else:
-                uid = db.ids[i]
-                title = db.headlines[i]
-                passage = db.articles[i]
-
-            if self.normalize:
-                title = normalize_passage(title)
-                title = title.lower()
-                passage = take_max_roberta_paragraphs(passage, title, tokenizer)
-                passage = normalize_passage(passage)
-
-            ctxs[uid] = BiEncoderPassage(passage, title)
+        # print("Creating bi-encoder dict...")
+        # for i in range(len(db.ids)):
+        #
+        #     if self.n_random_papers:
+        #         if self.get_paper_name(db.ids[i]) in random_papers:
+        #             uid = db.ids[i]
+        #             title = db.headlines[i]
+        #             passage = db.articles[i]
+        #         else:
+        #             continue
+        #     else:
+        #         uid = db.ids[i]
+        #         title = db.headlines[i]
+        #         passage = db.articles[i]
+        #
+        #     if self.normalize:
+        #         title = normalize_passage(title)
+        #         title = title.lower()
+        #         passage = take_max_roberta_paragraphs(passage, title, tokenizer)
+        #         passage = normalize_passage(passage)
+        #
+        #     ctxs[uid] = BiEncoderPassage(passage, title)
 
 
     @staticmethod
