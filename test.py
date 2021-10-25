@@ -33,7 +33,7 @@ class DBSolr:
         print("Gathering results of Solr search...")
         results = self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')
 
-        print(results[0])
+        print(results)
 
 
         #     ids.append(doc['id'])
