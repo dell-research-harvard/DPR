@@ -66,16 +66,15 @@ class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
         from transformers import RobertaTokenizerFast
         tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
 
+        print("Gathering data from solr...")
         # Create solr output object
         db = DBSolr(port=solr_port, core_name=solr_core_name)
 
-        # query_list = []
-        # for year in years:
-        #     query = f'image_file_name:"-{year}"'
-        #     query_list.append(query)
-        # search_term = " OR ".join(query_list)
-
-        search_term = 'headline:"senate" AND (article:"pill" OR article:"oral" OR article:"contracepti") AND image_file_name:"-1968"'
+        query_list = []
+        for year in years:
+            query = f'image_file_name:"-{year}"'
+            query_list.append(query)
+        search_term = " OR ".join(query_list)
 
         # Gather data from solr
         db.gather_ocr_texts_and_metadata(query=search_term)
