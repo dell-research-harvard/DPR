@@ -1,6 +1,7 @@
 from tqdm import tqdm
 import pysolr
 from typing import Dict
+import random
 
 from dpr.data.biencoder_data import (
     BiEncoderPassage,
@@ -52,51 +53,65 @@ class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
             solr_core_name: str,
             years: list = [],
             normalize: bool = False,
+            n_random_papers: bool = False
     ):
         self.solr_port = solr_port
         self.solr_core_name = solr_core_name
         self.years = years
         self.normalize = normalize
+        self.n_random_papers = n_random_papers
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
 
         from transformers import RobertaTokenizerFast
         tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
 
-        print("Creating bi-encoder dict...")
-
         # Create solr output object
         db = DBSolr(port=solr_port, core_name=solr_core_name)
 
-        # Gather data from solr
-        query_list = []
-        for year in years:
-            query = f'image_file_name:"-{year}"'
-            query_list.append(query)
-        search_term = " OR ".join(query_list)
+        # query_list = []
+        # for year in years:
+        #     query = f'image_file_name:"-{year}"'
+        #     query_list.append(query)
+        # search_term = " OR ".join(query_list)
 
+        search_term = 'headline:"senate" AND (article:"pill" OR article:"oral" OR article:"contracepti") AND image_file_name:"-1968"'
+
+        # Gather data from solr
         db.gather_ocr_texts_and_metadata(query=search_term)
 
-        for i in range(len(db.ids)):
-            uid = db.ids[i]
-            if self.normalize:
-                title = normalize_passage(db.headlines[i])
-                title = title.lower()
-                passage = take_max_roberta_paragraphs(db.articles[i], title, tokenizer)
-                passage = normalize_passage(passage)
-            else:
-                title = db.headlines[i]
-                passage = db.articles[i]
-            ctxs[uid] = BiEncoderPassage(passage, title)
+        if self.n_random_papers:
+            print("Random newspaper subset...")
+
+            papers = list(set([self.get_paper_name(scan) for scan in db.ids]))
+            print(f"{len(papers)} total papers...")
+
+            random.seed(789)
+            random_papers = random.sample(papers, self.n_random_papers)
+            print(f"Selected random papers: {random_papers}")
+
+        # print("Creating bi-encoder dict...")
+        # for i in range(len(db.ids)):
+        #     uid = db.ids[i]
+        #     if self.normalize:
+        #         title = normalize_passage(db.headlines[i])
+        #         title = title.lower()
+        #         passage = take_max_roberta_paragraphs(db.articles[i], title, tokenizer)
+        #         passage = normalize_passage(passage)
+        #     else:
+        #         title = db.headlines[i]
+        #         passage = db.articles[i]
+        #     ctxs[uid] = BiEncoderPassage(passage, title)
 
 
 if __name__ == '__main__':
     solr_port = 8983
     solr_core_name = 'mytest2'
     years = [1968]
+    n_random_papers = 100
 
     # create pipeline output object
-    ctx_class = NewspaperArchiveCtxSrc_heads_solr(solr_port, solr_core_name, years, True)
+    ctx_class = NewspaperArchiveCtxSrc_heads_solr(solr_port, solr_core_name, years, True, n_random_papers)
 
     ctxs = {}
 
