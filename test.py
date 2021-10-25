@@ -29,7 +29,7 @@ class DBSolr:
         for doc in tqdm(self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')):
             ids.append(doc['id'])
             articles.extend(doc['article'])
-            if doc['headline']:
+            if 'headline' in doc:
                 headlines.append(doc['headline'][0])
             else:
                 headlines.append("")
