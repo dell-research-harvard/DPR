@@ -32,18 +32,21 @@ class DBSolr:
         self.solr.ping()
         print("Gathering results of Solr search...")
         for doc in tqdm(self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')):
-            ids.append(doc['id'])
-            articles.extend(doc['article'])
-            if 'headline' in doc:
-                headlines.append(doc['headline'][0])
-            else:
-                headlines.append("")
 
-        assert len(ids) == len(articles) == len(headlines)
+            print(doc)
 
-        self.ids = ids
-        self.articles = articles
-        self.headlines = headlines
+        #     ids.append(doc['id'])
+        #     articles.extend(doc['article'])
+        #     if 'headline' in doc:
+        #         headlines.append(doc['headline'][0])
+        #     else:
+        #         headlines.append("")
+        #
+        # assert len(ids) == len(articles) == len(headlines)
+        #
+        # self.ids = ids
+        # self.articles = articles
+        # self.headlines = headlines
 
 
 class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
@@ -126,8 +129,14 @@ if __name__ == '__main__':
     years = [1968]
     n_random_papers = 2
 
-    # create pipeline output object
-    ctx_class = NewspaperArchiveCtxSrc_heads_solr(solr_port, solr_core_name, years, True, n_random_papers)
+    db = DBSolr(port=solr_port, core_name=solr_core_name)
 
-    ctxs = {}
-    ctx_class.load_data_to(ctxs)
+    query_list = []
+    for year in years:
+        query = f'image_file_name:"-{year}"'
+        query_list.append(query)
+    search_term = " OR ".join(query_list)
+
+    # Gather data from solr
+    db.gather_ocr_texts_and_metadata(query=search_term)
+
