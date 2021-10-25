@@ -34,6 +34,8 @@ class DBSolr:
             else:
                 headlines.append("")
 
+        assert len(ids) == len(articles) == len(headlines)
+
         self.ids = ids
         self.articles = articles
         self.headlines = headlines
@@ -69,9 +71,7 @@ class NewspaperArchiveCtxSrc_heads_solr:  # Needs to inherit from RetrieverData
             query_list.append(query)
         search_term = " OR ".join(query_list)
 
-        # db.gather_ocr_texts_and_metadata(query=search_term)
-        db.gather_ocr_texts_and_metadata(
-             query='image_file_name:"-1968"')
+        db.gather_ocr_texts_and_metadata(query=search_term)
 
         for i in range(len(db.ids)):
             uid = db.ids[i]
