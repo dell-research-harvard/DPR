@@ -43,4 +43,4 @@ if __name__ == '__main__':
     db.gather_ocr_texts_and_metadata(query='headline:"senate" AND (article:"pill" OR article:"oral" OR '                # Random small search
                                            'article:"contracepti") AND image_file_name:"-1968"')
 
-    print(db.ids)
+    print(db.headlines)
