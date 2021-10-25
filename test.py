@@ -98,16 +98,18 @@ class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
                     uid = db.ids[i]
                     title = db.headlines[i]
                     passage = db.articles[i]
+                else:
+                    continue
             else:
                 uid = db.ids[i]
                 title = db.headlines[i]
                 passage = db.articles[i]
 
-            # if self.normalize:
-            #     title = normalize_passage(title)
-            #     title = title.lower()
-            #     passage = take_max_roberta_paragraphs(passage, title, tokenizer)
-            #     passage = normalize_passage(passage)
+            if self.normalize:
+                title = normalize_passage(title)
+                title = title.lower()
+                passage = take_max_roberta_paragraphs(passage, title, tokenizer)
+                passage = normalize_passage(passage)
 
             ctxs[uid] = BiEncoderPassage(passage, title)
 
