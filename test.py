@@ -68,8 +68,7 @@ class NewspaperArchiveCtxSrc_heads_solr:  # Needs to inherit from RetrieverData
 
         # db.gather_ocr_texts_and_metadata(query=search_term)
         db.gather_ocr_texts_and_metadata(
-             query='headline:"senate" AND (article:"pill" OR article:"oral" OR '                                         # Random small search
-                   'article:"contracepti") AND image_file_name:"-1968"')
+             query='image_file_name:"-1968"')
 
         for i in range(len(db.ids)):
             uid = db.ids[i]
