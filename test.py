@@ -84,6 +84,7 @@ class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
             print("Random newspaper subset...")
 
             papers = list(set([self.get_paper_name(scan) for scan in db.ids]))
+            papers.sort()
             print(f"{len(papers)} total papers...")
             print(papers)
 
