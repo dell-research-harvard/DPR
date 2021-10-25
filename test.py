@@ -8,6 +8,10 @@ from dpr.data.biencoder_data import (
     take_max_roberta_paragraphs
 )
 
+from dpr.data.retriever_data import (
+    RetrieverData
+)
+
 
 class DBSolr:
     """Class for managing Solr database of pipeline outputs"""
@@ -41,7 +45,7 @@ class DBSolr:
         self.headlines = headlines
 
 
-class NewspaperArchiveCtxSrc_heads_solr:  # Needs to inherit from RetrieverData
+class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
     def __init__(
             self,
             solr_port: int,
