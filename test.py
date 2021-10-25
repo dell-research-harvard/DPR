@@ -22,7 +22,7 @@ class DBSolr:
         for doc in tqdm(self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')):
             ids.extend(doc['id'])
             articles.extend(doc['article'])
-            headlines.extend(doc['headline'])
+            #headlines.extend(doc['headline'])
 
         self.ids = ids
         self.articles = articles
