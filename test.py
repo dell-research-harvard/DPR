@@ -85,6 +85,7 @@ class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
 
             papers = list(set([self.get_paper_name(scan) for scan in db.ids]))
             print(f"{len(papers)} total papers...")
+            print(papers)
 
             random.seed(789)
             random_papers = random.sample(papers, self.n_random_papers)
@@ -113,7 +114,6 @@ class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
 
             ctxs[uid] = BiEncoderPassage(passage, title)
 
-        print(db.ids)
 
     @staticmethod
     def get_paper_name(image_file_name):
@@ -130,5 +130,4 @@ if __name__ == '__main__':
     ctx_class = NewspaperArchiveCtxSrc_heads_solr(solr_port, solr_core_name, years, True, False)
 
     ctxs = {}
-
     ctx_class.load_data_to(ctxs)
