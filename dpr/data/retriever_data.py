@@ -13,6 +13,7 @@ from omegaconf import DictConfig
 import ijson
 import glob
 from tqdm import tqdm
+import pysolr
 
 from dpr.data.biencoder_data import (
     BiEncoderPassage,
@@ -398,6 +399,50 @@ class NewspaperArchiveCtxSrc(RetrieverData):
 
 
 class NewspaperArchiveCtxSrc_heads(RetrieverData):
+    def __init__(
+            self,
+            path_pattern: str,
+            normalize: bool = False,
+            id_prefix: str = None,
+    ):
+        self.normalize = normalize
+        self.file_paths = glob.glob(path_pattern)
+        self.id_prefix = id_prefix
+
+    def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
+
+        from transformers import RobertaTokenizerFast
+        tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
+
+        print("Creating bi-encoder dict...")
+        for file_path in tqdm(self.file_paths):
+
+            with open(file_path, 'rb') as f:
+                items = ijson.kvitems(f, '')
+                ocr_text_generators = []
+                for k, v in items:
+                    ocr_text_generators.append(self.ocr_text_iter(v))
+
+            if len(ocr_text_generators) == 0:
+                continue
+
+            for gen in ocr_text_generators:
+                for layobj in gen:
+                    title, passage, object_id = layobj
+                    uid = object_id
+                    if self.normalize:
+                        title = normalize_passage(title)
+                        title = title.lower()
+                        passage = take_max_roberta_paragraphs(passage, title, tokenizer)
+                        passage = normalize_passage(passage)
+                    ctxs[uid] = BiEncoderPassage(passage, title)
+
+    def ocr_text_iter(self, v):
+        for ik in v:
+            yield (ik['headline'], ik['article'], ik['id'])
+
+
+class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
     def __init__(
             self,
             path_pattern: str,
