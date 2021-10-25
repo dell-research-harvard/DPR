@@ -112,7 +112,7 @@ if __name__ == '__main__':
     solr_port = 8983
     solr_core_name = 'mytest2'
     years = [1968]
-    n_random_papers = 100
+    n_random_papers = 2
 
     # create pipeline output object
     ctx_class = NewspaperArchiveCtxSrc_heads_solr(solr_port, solr_core_name, years, True, n_random_papers)
