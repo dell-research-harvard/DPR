@@ -16,14 +16,17 @@ class DBSolr:
         ids = []
         articles = []
         headlines = []
+        docs = []
 
         self.solr.ping()
         print("Gathering results of Solr search...")
         for doc in tqdm(self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')):
+            docs.extend[doc]
             ids.extend(doc['id'])
             articles.extend(doc['article'])
             #headlines.extend(doc['headline'])
 
+        self.docs = docs
         self.ids = ids
         self.articles = articles
         self.headlines = headlines
@@ -40,9 +43,9 @@ if __name__ == '__main__':
 
     # assemble OCR data from cold pipeline output
     #db.gather_ocr_texts_and_metadata(query='image_file_name:"-1968"')
-    db.gather_ocr_texts_and_metadata(query='(article:"pill" OR article:"oral" OR '                 # Random small search
+    db.gather_ocr_texts_and_metadata(query='headline:"senate" AND (article:"pill" OR article:"oral" OR '                # Random small search
                                            'article:"contracepti") AND image_file_name:"-1968"')
 
-    print(len(db.articles))
+    print(db.docs)
 
 
