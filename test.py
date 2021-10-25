@@ -13,32 +13,20 @@ class DBSolr:
     def gather_ocr_texts_and_metadata(self, query):
         """Extract OCR article texts and metadata from Solr database via search"""
 
-        ocr_article_texts = []
-        ocr_article_headlines = []
-        ocr_article_faids = []
-        ocr_article_metadata = []
+        ids = []
+        articles = []
+        headlines = []
 
         self.solr.ping()
         print("Gathering results of Solr search...")
-        for doc in tqdm(self.solr.search(query, fl='id,image_file_name,full_article_id,article,headline', sort='id ASC', cursorMark='*')):
-            if 'article' in doc:
-                ocr_article_texts.extend(doc['article'])
-                # ocr_article_headlines.extend(doc['headline'])
-                ocr_article_faids.extend(doc['full_article_id'])
-                ocr_article_metadata.extend(doc['image_file_name'])
+        for doc in tqdm(self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')):
+            ids.extend(doc['id'])
+            articles.extend(doc['article'])
+            headlines.extend(doc['headline'])
 
-        self.ocr_article_texts = ocr_article_texts
-        self.ocr_article_headlines = ocr_article_headlines
-        self.ocr_article_faids = ocr_article_faids
-        self.ocr_article_metadata = ocr_article_metadata
-        self.ocr_article_dates = [extract_date_from_metadata(md) for md in ocr_article_metadata]
-
-
-def extract_date_from_metadata(metadata):
-
-    fields = metadata.split('-')
-    month, day, year = fields[-5:-2]
-    return month, int(day), int(year)
+        self.ids = ids
+        self.articles = articles
+        self.headlines = headlines
 
 
 if __name__ == '__main__':
@@ -52,8 +40,8 @@ if __name__ == '__main__':
 
     # assemble OCR data from cold pipeline output
     #db.gather_ocr_texts_and_metadata(query='image_file_name:"-1968"')
-    db.gather_ocr_texts_and_metadata(query='article:"senate" AND (article:"pill" OR article:"oral" OR '
+    db.gather_ocr_texts_and_metadata(query='article:"senate" AND (article:"pill" OR article:"oral" OR '                 # Random small search
                                            'article:"contracepti") AND image_file_name:"-1968"')
 
-    print(db.ocr_article_faids)
+    print(db.ids)
 
