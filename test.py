@@ -20,8 +20,8 @@ class DBSolr:
         self.solr.ping()
         print("Gathering results of Solr search...")
         for doc in tqdm(self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')):
-            print(doc['id'])
-            ids.extend(doc['id'])
+            #print(doc['id'])
+            ids.append(doc['id'])
             articles.extend(doc['article'])
             #headlines.extend(doc['headline'])
 
@@ -44,5 +44,5 @@ if __name__ == '__main__':
     db.gather_ocr_texts_and_metadata(query='headline:"senate" AND (article:"pill" OR article:"oral" OR '                # Random small search
                                            'article:"contracepti") AND image_file_name:"-1968"')
 
-
+    print(db.ids)
 
