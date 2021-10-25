@@ -31,9 +31,9 @@ class DBSolr:
 
         self.solr.ping()
         print("Gathering results of Solr search...")
-        results = self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')
+        for doc in tqdm(self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')):
+            print(1)
 
-        print(results)
 
 
         #     ids.append(doc['id'])
