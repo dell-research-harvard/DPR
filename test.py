@@ -113,6 +113,8 @@ class NewspaperArchiveCtxSrc_heads_solr(RetrieverData):
 
             ctxs[uid] = BiEncoderPassage(passage, title)
 
+            ctxs = db.ids
+
     @staticmethod
     def get_paper_name(image_file_name):
         return "-".join(image_file_name.split("-")[1:-5])
