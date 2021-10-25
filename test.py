@@ -31,7 +31,7 @@ class DBSolr:
 
         self.solr.ping()
         print("Gathering results of Solr search...")
-        results = tqdm(self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*'))
+        results = self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')
 
         print(results[0])
 
