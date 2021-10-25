@@ -22,10 +22,7 @@ class DBSolr:
         for doc in tqdm(self.solr.search(query, fl='id,article,headline', sort='id ASC', cursorMark='*')):
             ids.append(doc['id'])
             articles.extend(doc['article'])
-
-            print(doc['headline'])
-
-            #headlines.extend(doc['headline'])
+            headlines.append(doc['headline'])
 
         self.ids = ids
         self.articles = articles
@@ -46,4 +43,4 @@ if __name__ == '__main__':
     db.gather_ocr_texts_and_metadata(query='headline:"senate" AND (article:"pill" OR article:"oral" OR '                # Random small search
                                            'article:"contracepti") AND image_file_name:"-1968"')
 
-
+    print(db.ids)
