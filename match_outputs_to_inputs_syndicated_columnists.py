@@ -17,7 +17,7 @@ import os
 
 # Vietnam on Guppy
 original_data = '/mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1968_full_bl_211112/'
-retrieved_data = '/mnt/data02/retrieval/retrieval_test/test_results/newspapers211001b/strata_0_0.json'
+strata_0_file = '/mnt/data02/retrieval/retrieval_test/test_results/newspapers211001b/strata_0_0.json'
 image_size_file = '/mnt/data02/retrieval/retrieval_test/size_dict.json'
 save_dir = '/mnt/data02/retrieval/retrieval_test/sc_matched_retriever_output/'
 ls_image_path_root = '/data_jpgs_ws'
