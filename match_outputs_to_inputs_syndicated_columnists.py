@@ -73,6 +73,8 @@ for path in tqdm(glob.glob(f'{original_data}/**/*.json')):
         items = ijson.kvitems(f, '')
         for k, v in items:
 
+            print(k)
+
             if k in images_with_sizes:
 
                 print("Found")
