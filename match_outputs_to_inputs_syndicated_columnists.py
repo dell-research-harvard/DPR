@@ -62,7 +62,7 @@ with open(strata_0_file, 'rb') as f:
 # Get images with sizes
 with open(image_size_file, 'rb') as f:
     sizes = json.load(f)
-    images_with_sizes = list(sizes.keys())
+    images_with_sizes = [s + ".jpg" for s in list(sizes.keys())]
 
 # Get other data
 counter = 0
@@ -71,13 +71,13 @@ for path in tqdm(glob.glob(f'{original_data}/**/*.json')):
         items = ijson.kvitems(f, '')
         for k, v in items:
 
-            if k in scans_in_s0 and k in [s + ".jpg" for s in images_with_sizes]:
+            if k in scans_in_s0 and k in images_with_sizes:
                 for article in v:
                     if any(query in article["query"] for query in query_list):
 
                         # Create box for full article
-                        scan_width = sizes[k][0]
-                        scan_height = sizes[k][1]
+                        scan_width = sizes[k.replace(".jpg", "")][0]
+                        scan_height = sizes[k.replace(".jpg", "")][1]
                         x = (article['bbox'][0] * 100) / scan_width
                         y = (article['bbox'][1] * 100) / scan_height
                         w = ((article['bbox'][2] - article['bbox'][0]) * 100) / scan_width
