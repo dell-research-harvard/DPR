@@ -15,7 +15,7 @@ import os
 # save_dir = 'C:/Users/Emily/Documents/Predoc/Newspapers/sc_matched_retriever_output/'
 # ls_image_path_root = '/data'
 
-# Vietnam on Guppy
+# # Vietnam on Guppy
 original_data = '/mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1968_full_bl_211112/'
 strata_0_file = '/mnt/data02/retrieval/retrieval_test/test_results/newspapers211001b/strata_0_0.json'
 image_size_file = '/mnt/data02/retrieval/retrieval_test/size_dict.json'
@@ -62,7 +62,9 @@ with open(strata_0_file, 'rb') as f:
 # Get images with sizes
 with open(image_size_file, 'rb') as f:
     sizes = json.load(f)
-    images_with_sizes = sizes.keys()
+    images_with_sizes = list(sizes.keys())
+
+print(images_with_sizes)
 
 # Get other data
 counter = 0
@@ -70,47 +72,53 @@ for path in tqdm(glob.glob(f'{original_data}/**/*.json')):
     with open(path, 'rb') as f:
         items = ijson.kvitems(f, '')
         for k, v in items:
-            if k in scans_in_s0 and k in images_with_sizes:
-                for article in v:
-                    if any(query in article["query"] for query in query_list):
 
-                        # Create box for full article
-                        scan_width = sizes[k][0]
-                        scan_height = sizes[k][1]
-                        x = (article['bbox'][0] * 100) / scan_width
-                        y = (article['bbox'][1] * 100) / scan_height
-                        w = ((article['bbox'][2] - article['bbox'][0]) * 100) / scan_width
-                        h = ((article['bbox'][3] - article['bbox'][1]) * 100) / scan_height
+            if k in images_with_sizes:
 
-                        # Create label studio sample
-                        ls_item = [{
-                            "data": {
-                                "image": f"{ls_image_path_root}/local-files/?d=images/{article['image_file_name']}",
-                                "headline": article['headline'],
-                                "article": article['article'],
-                                "byline": article['byline']
-                            },
+                print("Found")
 
-                            "predictions": [{
-                                "result": [{
-                                    "value": {
-                                        "x": x,
-                                        "y": y,
-                                        "width": w,
-                                        "height": h
-                                    },
-                                    "from_name": "label",
-                                    "to_name": "image",
-                                    "type": "rectanglelabels"
-                                }]
-                            }]
-                        }]
-
-                        for query in query_list:
-                            if query in article["query"]:
-
-                                os.makedirs(f'{save_dir}/{query}', exist_ok=True)
-                                with open(f'{save_dir}/{query}/sample_{counter}.json', "w") as writer:
-                                    writer.write(simplejson.dumps(ls_item, indent=4) + "\n")
-
-                        counter += 1
+            #
+            # if k in scans_in_s0 and k in images_with_sizes:
+            #     for article in v:
+            #         if any(query in article["query"] for query in query_list):
+            #
+            #             # Create box for full article
+            #             scan_width = sizes[k][0]
+            #             scan_height = sizes[k][1]
+            #             x = (article['bbox'][0] * 100) / scan_width
+            #             y = (article['bbox'][1] * 100) / scan_height
+            #             w = ((article['bbox'][2] - article['bbox'][0]) * 100) / scan_width
+            #             h = ((article['bbox'][3] - article['bbox'][1]) * 100) / scan_height
+            #
+            #             # Create label studio sample
+            #             ls_item = [{
+            #                 "data": {
+            #                     "image": f"{ls_image_path_root}/local-files/?d=images/{article['image_file_name']}",
+            #                     "headline": article['headline'],
+            #                     "article": article['article'],
+            #                     "byline": article['byline']
+            #                 },
+            #
+            #                 "predictions": [{
+            #                     "result": [{
+            #                         "value": {
+            #                             "x": x,
+            #                             "y": y,
+            #                             "width": w,
+            #                             "height": h
+            #                         },
+            #                         "from_name": "label",
+            #                         "to_name": "image",
+            #                         "type": "rectanglelabels"
+            #                     }]
+            #                 }]
+            #             }]
+            #
+            #             for query in query_list:
+            #                 if query in article["query"]:
+            #
+            #                     os.makedirs(f'{save_dir}/{query}', exist_ok=True)
+            #                     with open(f'{save_dir}/{query}/sample_{counter}.json', "w") as writer:
+            #                         writer.write(simplejson.dumps(ls_item, indent=4) + "\n")
+            #
+            #             counter += 1
