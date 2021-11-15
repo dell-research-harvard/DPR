@@ -13,14 +13,12 @@ import os
 # strata_0_file = 'C:/Users/Emily/Documents/Predoc/Newspapers/newspapers211001b/strata_0_0.json'
 # image_size_file = 'C:/Users/Emily/Documents/Predoc/Newspapers/size_dict.json'
 # save_dir = 'C:/Users/Emily/Documents/Predoc/Newspapers/sc_matched_retriever_output/'
-# ls_image_path_root = '/data'
 
 # # Vietnam on Guppy
 original_data = '/mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1968_full_bl_211112/'
 strata_0_file = '/mnt/data02/retrieval/retrieval_test/test_results/newspapers211001b/strata_0_0.json'
 image_size_file = '/mnt/data02/retrieval/retrieval_test/size_dict.json'
 save_dir = '/mnt/data02/retrieval/retrieval_test/sc_matched_retriever_output/'
-ls_image_path_root = '/data_jpgs_ws'
 
 
 query_list = ["accnd_140+c-l-sulzberger-",
@@ -86,7 +84,7 @@ for path in tqdm(glob.glob(f'{original_data}/**/*.json')):
                         # Create label studio sample
                         ls_item = [{
                             "data": {
-                                "image": f"{ls_image_path_root}/local-files/?d=images/{article['image_file_name']}",
+                                "image": f"/data/local-files/?d=data/{article['image_file_name']}",
                                 "headline": article['headline'],
                                 "article": article['article'],
                                 "byline": article['byline']
