@@ -17,8 +17,6 @@ import random
 import sys
 import time
 from typing import Tuple
-import subprocess
-import gc
 
 import hydra
 import torch
@@ -107,13 +105,13 @@ class BiEncoderTrainer(object):
         self.dev_iterator = None
 
     def get_data_iterator(
-        self,
-        batch_size: int,
-        is_train_set: bool,
-        shuffle=True,
-        shuffle_seed: int = 0,
-        offset: int = 0,
-        rank: int = 0,
+            self,
+            batch_size: int,
+            is_train_set: bool,
+            shuffle=True,
+            shuffle_seed: int = 0,
+            offset: int = 0,
+            rank: int = 0,
     ):
 
         hydra_datasets = (
@@ -173,7 +171,7 @@ class BiEncoderTrainer(object):
             return
 
         updates_per_epoch = (
-            train_iterator.max_iterations // cfg.train.gradient_accumulation_steps
+                train_iterator.max_iterations // cfg.train.gradient_accumulation_steps
         )
 
         total_updates = updates_per_epoch * cfg.train.num_train_epochs
@@ -293,7 +291,7 @@ class BiEncoderTrainer(object):
                     i,
                     time.time() - start_time,
                     loss.item(),
-                )
+                    )
 
         total_loss = total_loss / batches
         total_samples = batches * cfg.train.dev_batch_size * self.distributed_factor
@@ -343,8 +341,8 @@ class BiEncoderTrainer(object):
         for i, samples_batch in enumerate(data_iterator.iterate_ds_data()):
             # samples += 1
             if (
-                len(q_represenations)
-                > cfg.train.val_av_rank_max_qs / distributed_factor
+                    len(q_represenations)
+                    > cfg.train.val_av_rank_max_qs / distributed_factor
             ):
                 break
 
@@ -387,8 +385,8 @@ class BiEncoderTrainer(object):
 
                 ctx_ids_batch = ctxs_ids[batch_start : batch_start + sub_batch_size]
                 ctx_seg_batch = ctxs_segments[
-                    batch_start : batch_start + sub_batch_size
-                ]
+                                batch_start : batch_start + sub_batch_size
+                                ]
 
                 q_attn_mask = self.tensorizer.get_attn_mask(q_ids)
                 ctx_attn_mask = self.tensorizer.get_attn_mask(ctx_ids_batch)
@@ -461,11 +459,11 @@ class BiEncoderTrainer(object):
         return av_rank
 
     def _train_epoch(
-        self,
-        scheduler,
-        epoch: int,
-        eval_step: int,
-        train_data_iterator: MultiSetDataIterator,
+            self,
+            scheduler,
+            epoch: int,
+            eval_step: int,
+            train_data_iterator: MultiSetDataIterator,
     ):
 
         cfg = self.cfg
@@ -484,7 +482,7 @@ class BiEncoderTrainer(object):
 
         dataset = 0
         for i, samples_batch in enumerate(
-            train_data_iterator.iterate_ds_data(epoch=epoch)
+                train_data_iterator.iterate_ds_data(epoch=epoch)
         ):
             if isinstance(samples_batch, Tuple):
                 samples_batch, dataset = samples_batch
@@ -521,10 +519,6 @@ class BiEncoderTrainer(object):
             loss_scale = (
                 cfg.loss_scale_factors[dataset] if cfg.loss_scale_factors else None
             )
-
-            show_gpu('I:')
-            print_gpu_obj()
-
             loss, correct_cnt = _do_biencoder_fwd_pass(
                 self.biencoder,
                 biencoder_batch,
@@ -534,9 +528,6 @@ class BiEncoderTrainer(object):
                 rep_positions=rep_positions,
                 loss_scale=loss_scale,
             )
-
-            show_gpu('J:')
-            print_gpu_obj()
 
             epoch_correct_predictions += correct_cnt
             epoch_loss += loss.item()
@@ -597,12 +588,6 @@ class BiEncoderTrainer(object):
                 )
                 self.biencoder.train()
 
-            # Workaround
-            gc.collect()
-            torch.cuda.empty_cache()
-
-            show_gpu('L:')
-
         logger.info("Epoch finished on %d", cfg.local_rank)
         self.validate_and_save(epoch, data_iteration, scheduler)
 
@@ -657,13 +642,13 @@ class BiEncoderTrainer(object):
 
 
 def _calc_loss(
-    cfg,
-    loss_function,
-    local_q_vector,
-    local_ctx_vectors,
-    local_positive_idxs,
-    local_hard_negatives_idxs: list = None,
-    loss_scale: float = None,
+        cfg,
+        loss_function,
+        local_q_vector,
+        local_ctx_vectors,
+        local_positive_idxs,
+        local_hard_negatives_idxs: list = None,
+        loss_scale: float = None,
 ) -> Tuple[T, bool]:
     """
     Calculates In-batch negatives schema loss and supports to run it in DDP mode by exchanging the representations
@@ -738,13 +723,13 @@ def _calc_loss(
 
 
 def _do_biencoder_fwd_pass(
-    model: nn.Module,
-    input: BiEncoderBatch,
-    tensorizer: Tensorizer,
-    cfg,
-    encoder_type: str,
-    rep_positions=0,
-    loss_scale: float = None,
+        model: nn.Module,
+        input: BiEncoderBatch,
+        tensorizer: Tensorizer,
+        cfg,
+        encoder_type: str,
+        rep_positions=0,
+        loss_scale: float = None,
 ) -> Tuple[torch.Tensor, int]:
 
     input = BiEncoderBatch(**move_to_device(input._asdict(), cfg.device))
@@ -796,35 +781,7 @@ def _do_biencoder_fwd_pass(
         loss = loss.mean()
     if cfg.train.gradient_accumulation_steps > 1:
         loss = loss / cfg.gradient_accumulation_steps
-
     return loss, is_correct
-
-
-def show_gpu(msg):
-    """
-    ref: https://discuss.pytorch.org/t/access-gpu-memory-usage-in-pytorch/3192/4
-    """
-    def query(field):
-        return(subprocess.check_output(
-            ['nvidia-smi', f'--query-gpu={field}',
-             '--format=csv,nounits,noheader'],
-            encoding='utf-8'))
-    def to_int(result):
-        return int(result.strip().split('\n')[0])
-
-    used = to_int(query('memory.used'))
-    total = to_int(query('memory.total'))
-    pct = used/total
-    print('\n' + msg, f'{100*pct:2.1f}% ({used} out of {total})')
-
-
-def print_gpu_obj():
-    count = 0
-    for tracked_object in gc.get_objects():
-        if torch.is_tensor(tracked_object):
-            if tracked_object.is_cuda:
-                count+=1
-    print(f'\nTHERE ARE {count} OBJECTS ON GPU')
 
 
 @hydra.main(config_path="conf", config_name="biencoder_train_cfg")
