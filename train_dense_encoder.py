@@ -50,9 +50,19 @@ from dpr.utils.model_utils import (
     load_states_from_checkpoint,
 )
 
+import wandb
+
 logger = logging.getLogger()
 setup_logger(logger)
 
+wandb.init(project="DPR", entity="emilys")
+wandb.config = {
+    "learning_rate": 2e-5,
+    "epochs": 40,
+    "batch_size": 4
+}
+
+wandb.log({"loss": loss})
 
 class BiEncoderTrainer(object):
     """
