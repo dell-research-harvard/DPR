@@ -62,8 +62,6 @@ wandb.config = {
     "batch_size": 4
 }
 
-wandb.log({"loss": loss})
-
 class BiEncoderTrainer(object):
     """
     BiEncoder training pipeline component. Can be used to initiate or resume training and validate the trained model
@@ -574,6 +572,7 @@ class BiEncoderTrainer(object):
                     loss.item(),
                     lr,
                 )
+                wandb.log({"loss": loss})
 
             if (i + 1) % rolling_loss_step == 0:
                 logger.info("Train batch %d", data_iteration)
