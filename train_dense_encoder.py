@@ -242,6 +242,8 @@ class BiEncoderTrainer(object):
                 self.best_cp_name = cp_name
                 logger.info("New Best validation checkpoint %s", cp_name)
 
+        wandb.log({"Eval loss": validation_loss})
+
     def validate_nll(self) -> float:
         logger.info("NLL validation ...")
         cfg = self.cfg
@@ -572,7 +574,7 @@ class BiEncoderTrainer(object):
                     loss.item(),
                     lr,
                 )
-                wandb.log({"loss": loss})
+                wandb.log({"Training loss": loss})
 
             if (i + 1) % rolling_loss_step == 0:
                 logger.info("Train batch %d", data_iteration)
