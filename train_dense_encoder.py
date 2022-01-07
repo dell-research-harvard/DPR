@@ -369,7 +369,7 @@ class BiEncoderTrainer(object):
             )
 
             ### Bug fix
-            biencoder_input = BiEncoderBatch(**move_to_device(biencoder_input._asdict(), cfg.device))
+            #biencoder_input = BiEncoderBatch(**move_to_device(biencoder_input._asdict(), cfg.device))
 
             total_ctxs = len(ctx_represenations)
             ctxs_ids = biencoder_input.context_ids
