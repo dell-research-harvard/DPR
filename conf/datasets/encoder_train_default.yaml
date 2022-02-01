@@ -30,8 +30,10 @@ squad1_dev:
 
 custom_train:
   _target_: dpr.data.biencoder_data.CustomJsonQADataset
-  file_path: /home/silcock/topic/mnli/mnli_for_dpr.json
+#  file_path: /home/silcock/topic/mnli/mnli_for_dpr.json
+  file_path: /srv/accnd/topic_edit_sent_pl/topic/dpr/train_data/mnli_for_dpr.json
 
 custom_dev:
   _target_: dpr.data.biencoder_data.CustomJsonQADataset
-  file_path: /home/silcock/topic/mnli/mnli_for_dpr_dev.json
+#  file_path: /home/silcock/topic/mnli/mnli_for_dpr_dev.json
+  file_path: /srv/accnd/topic_edit_sent_pl/topic/dpr/train_data/mnli_for_dpr_dev.json
