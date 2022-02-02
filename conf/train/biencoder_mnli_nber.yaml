@@ -11,7 +11,7 @@ weight_decay: 0.0
 learning_rate: 5e-3
 
 # Linear warmup over warmup_steps.
-warmup_steps: 3000
+warmup_steps: 5000
 
 # Number of updates steps to accumulate before performing a backward/update pass.
 gradient_accumulation_steps: 1
