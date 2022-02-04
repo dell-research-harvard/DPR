@@ -24,4 +24,4 @@ other_negatives: 1
 val_av_rank_hard_neg: 30
 val_av_rank_other_neg: 30
 val_av_rank_bsz: 128
-val_av_rank_max_qs: 10000
+val_av_rank_max_qs: 20000
