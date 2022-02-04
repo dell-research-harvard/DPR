@@ -11,7 +11,7 @@ weight_decay: 0.0
 learning_rate: 7e-5
 
 # Linear warmup over warmup_steps.
-warmup_steps: 150
+warmup_steps: 500
 
 # Number of updates steps to accumulate before performing a backward/update pass.
 gradient_accumulation_steps: 1
@@ -24,4 +24,4 @@ other_negatives: 1
 val_av_rank_hard_neg: 30
 val_av_rank_other_neg: 30
 val_av_rank_bsz: 128
-val_av_rank_max_qs: 20000
+val_av_rank_max_qs: 10000
