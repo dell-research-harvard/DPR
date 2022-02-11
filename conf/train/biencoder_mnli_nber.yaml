@@ -8,7 +8,7 @@ max_grad_norm: 1.9
 log_batch_step: 1
 train_rolling_loss_step: 100
 weight_decay: 0.0
-learning_rate: 7e-5
+learning_rate: 5e-5
 
 # Linear warmup over warmup_steps.
 warmup_steps: 500
@@ -17,7 +17,7 @@ warmup_steps: 500
 gradient_accumulation_steps: 1
 
 # Total number of training epochs to perform.
-num_train_epochs: 40
+num_train_epochs: 50
 eval_per_epoch: 4
 hard_negatives: 1
 other_negatives: 1
