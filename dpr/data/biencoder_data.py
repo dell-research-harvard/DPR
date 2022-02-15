@@ -264,7 +264,8 @@ def normalize_passage(ctx_text: str):
     ctx_text = ctx_text.strip()
     return ctx_text
 
-def take_max_roberta_paragraphs(ctx_text, tokenizer, tok_space = 510, tok_max = 512):
+
+def take_max_model_paragraphs(ctx_text, tokenizer, tok_space=510, tok_max=512):
     paragraphs = ctx_text.split('\n\n')
     returned_paragraphs = []
     for paragraph in paragraphs:
@@ -278,6 +279,7 @@ def take_max_roberta_paragraphs(ctx_text, tokenizer, tok_space = 510, tok_max = 
         else:
             returned_paragraphs.append(paragraph)
     return "\n".join(returned_paragraphs)
+
 
 def normalize_question(question: str) -> str:
     question = question.replace("’", "'")

@@ -23,14 +23,6 @@ newspaper_archive_heads:
   normalize: True
   n_random_papers: 100
 
-newspaper_archive_heads_solr:
-  _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc_heads_solr
-  years: [1968]
-  solr_core_name: 'mytest2'
-  solr_port: 8983
-  normalize: True
-  n_random_papers: 100
-
 mnli_dev:
   _target_: dpr.data.retriever_data.MnliJsonlCtxSrc
   file: /mnt/data01/mnli_for_dpr_dev.jsonl
