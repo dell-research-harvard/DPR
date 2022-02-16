@@ -13,7 +13,7 @@ from omegaconf import DictConfig
 import ijson
 import glob
 from tqdm import tqdm
-from transformers import RobertaTokenizerFast
+from transformers import BartTokenizerFast
 
 from dpr.data.biencoder_data import (
     BiEncoderPassage,
@@ -337,7 +337,7 @@ class NewspaperArchiveCtxSrc(RetrieverData):
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
 
-        tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
+        tokenizer = BartTokenizerFast.from_pretrained("facebook/bart-base")
 
         if self.n_random_papers:
             print("Random newspaper subset...")
@@ -411,7 +411,7 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
 
-        tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
+        tokenizer = BartTokenizerFast.from_pretrained("facebook/bart-base")
 
         if self.n_random_papers:
             print("Random newspaper subset...")
