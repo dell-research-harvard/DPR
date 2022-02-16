@@ -403,11 +403,13 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
             normalize: bool = False,
             id_prefix: str = None,
             n_random_papers: bool = False,
+            month: str = None,
     ):
         self.normalize = normalize
         self.file_paths = glob.glob(path_pattern)
         self.id_prefix = id_prefix
         self.n_random_papers = n_random_papers
+        self.month_str = "-" + month + "-"
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
 
@@ -436,11 +438,19 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
                 items = ijson.kvitems(f, '')
                 ocr_text_generators = []
                 for k, v in items:
-                    if self.n_random_papers:
-                        if self.get_paper_name(k) in random_papers:
-                            ocr_text_generators.append(self.ocr_text_iter(v))
+                    if self.month_str:
+                        if self.month_str in k:
+                            if self.n_random_papers:
+                                if self.get_paper_name(k) in random_papers:
+                                    ocr_text_generators.append(self.ocr_text_iter(v))
+                            else:
+                                ocr_text_generators.append(self.ocr_text_iter(v))
                     else:
-                        ocr_text_generators.append(self.ocr_text_iter(v))
+                        if self.n_random_papers:
+                            if self.get_paper_name(k) in random_papers:
+                                ocr_text_generators.append(self.ocr_text_iter(v))
+                        else:
+                            ocr_text_generators.append(self.ocr_text_iter(v))
 
             if len(ocr_text_generators) == 0:
                 continue
