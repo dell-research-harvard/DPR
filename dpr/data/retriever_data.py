@@ -338,9 +338,8 @@ class NewspaperArchiveCtxSrc(RetrieverData):
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
 
-        if self.layout_object == "article":
-            from transformers import RobertaTokenizerFast
-            tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
+        from transformers import RobertaTokenizerFast
+        tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
 
         if self.n_random_papers:
             print("Random newspaper subset...")

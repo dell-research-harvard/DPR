@@ -269,12 +269,11 @@ def take_max_model_paragraphs(ctx_text, tokenizer, tok_space=510, tok_max=512):
     paragraphs = ctx_text.split('\n\n')
     returned_paragraphs = []
     for paragraph in paragraphs:
-        try:
-            para_tokens = tokenizer(paragraph)['input_ids']
-        except:
-            print("Paragraph: ", paragraph)
-            print("Tokenized: ", tokenizer(paragraph))
-            para_tokens = tokenizer(paragraph)['input_ids']
+        print("Paragraph: ", paragraph)
+        print("Type: ", type(paragraph))
+        print("Tokenized: ", tokenizer(paragraph))
+        para_tokens = tokenizer(paragraph)['input_ids']
+
         n_tok = len(para_tokens) - 2 + 1
         tok_space -= n_tok
         if tok_space <= 0 and len(returned_paragraphs) == 0:
