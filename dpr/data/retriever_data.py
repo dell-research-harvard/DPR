@@ -411,7 +411,7 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
 
-#        tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
+        tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
 
         if self.n_random_papers:
             print("Random newspaper subset...")
@@ -452,8 +452,7 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
                     if self.normalize:
                         title = normalize_passage(title)
                         title = title.lower()
-                        print("Type A: ", type(tokenizer))
-                        passage = take_max_model_paragraphs(passage, title, tokenizer)
+                        passage = take_max_model_paragraphs(passage, tokenizer)
                         passage = normalize_passage(passage)
                     ctxs[uid] = BiEncoderPassage(passage, title)
 
@@ -608,8 +607,6 @@ class JsonlTablesCtxSrc(object):
 
 
 def take_max_model_paragraphs(ctx_text, tokenizer, tok_space=510, tok_max=512):
-
-    tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
 
     paragraphs = ctx_text.split('\n\n')
     returned_paragraphs = []
