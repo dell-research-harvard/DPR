@@ -454,6 +454,7 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
                     if self.normalize:
                         title = normalize_passage(title)
                         title = title.lower()
+                        print("type of tokenizer: ", type(tokenizer))
                         passage = take_max_model_paragraphs(passage, title, tokenizer)
                         passage = normalize_passage(passage)
                     ctxs[uid] = BiEncoderPassage(passage, title)
