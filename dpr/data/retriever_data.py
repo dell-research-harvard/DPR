@@ -13,7 +13,7 @@ from omegaconf import DictConfig
 import ijson
 import glob
 from tqdm import tqdm
-import pysolr
+from transformers import RobertaTokenizerFast
 
 from dpr.data.biencoder_data import (
     BiEncoderPassage,
@@ -337,7 +337,6 @@ class NewspaperArchiveCtxSrc(RetrieverData):
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
 
-        from transformers import RobertaTokenizerFast
         tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
 
         if self.n_random_papers:
@@ -411,7 +410,6 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
 
-        from transformers import RobertaTokenizerFast
         tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
 
         if self.n_random_papers:
@@ -613,6 +611,7 @@ class JsonlTablesCtxSrc(object):
 
 
 def take_max_model_paragraphs(ctx_text, tokenizer, tok_space=510, tok_max=512):
+    print("Type: ", type(tokenizer))
     paragraphs = ctx_text.split('\n\n')
     returned_paragraphs = []
     for paragraph in paragraphs:
