@@ -18,7 +18,6 @@ import pysolr
 from dpr.data.biencoder_data import (
     BiEncoderPassage,
     normalize_passage,
-    take_max_model_paragraphs,
     normalize_question,
     get_dpr_files,
     read_nq_tables_jsonl,
@@ -611,3 +610,21 @@ class JsonlTablesCtxSrc(object):
             docs[sample_id] = TableChunk(chunk[1], chunk[2], chunk[3])
         logger.info("Loaded %d tables chunks", len(docs))
         ctxs.update(docs)
+
+
+def take_max_model_paragraphs(ctx_text, tokenizer, tok_space=510, tok_max=512):
+    paragraphs = ctx_text.split('\n\n')
+    returned_paragraphs = []
+    for paragraph in paragraphs:
+        print("Type: ", type(tokenizer))
+        para_tokens = tokenizer(paragraph)['input_ids']
+        n_tok = len(para_tokens) - 2 + 1
+        tok_space -= n_tok
+        if tok_space <= 0 and len(returned_paragraphs) == 0:
+            return tokenizer.decode(para_tokens[1:tok_max])
+        elif tok_space <= 0:
+            return "\n".join(returned_paragraphs)
+        else:
+            returned_paragraphs.append(paragraph)
+    return "\n".join(returned_paragraphs)
+

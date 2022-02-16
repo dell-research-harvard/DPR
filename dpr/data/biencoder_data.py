@@ -265,23 +265,6 @@ def normalize_passage(ctx_text: str):
     return ctx_text
 
 
-def take_max_model_paragraphs(ctx_text, tokenizer, tok_space=510, tok_max=512):
-    paragraphs = ctx_text.split('\n\n')
-    returned_paragraphs = []
-    for paragraph in paragraphs:
-        print("Type: ", type(tokenizer))
-        para_tokens = tokenizer(paragraph)['input_ids']
-        n_tok = len(para_tokens) - 2 + 1
-        tok_space -= n_tok
-        if tok_space <= 0 and len(returned_paragraphs) == 0:
-            return tokenizer.decode(para_tokens[1:tok_max])
-        elif tok_space <= 0:
-            return "\n".join(returned_paragraphs)
-        else:
-            returned_paragraphs.append(paragraph)
-    return "\n".join(returned_paragraphs)
-
-
 def normalize_question(question: str) -> str:
     question = question.replace("’", "'")
     return question
