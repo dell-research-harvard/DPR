@@ -21,7 +21,7 @@ newspaper_archive_heads:
   _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc_heads
   path_pattern: /mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1968_full_bl_211112/**/ocr_*
   normalize: True
-  n_random_papers: 100
+  n_random_papers: 10
 
 mnli_dev:
   _target_: dpr.data.retriever_data.MnliJsonlCtxSrc
