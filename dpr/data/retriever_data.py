@@ -608,7 +608,7 @@ class JsonlTablesCtxSrc(object):
 
 
 def take_max_model_paragraphs(ctx_text, tokenizer, tok_space=510, tok_max=512):
-    print("Type: ", type(tokenizer))
+    print("Type B: ", type(tokenizer))
     paragraphs = ctx_text.split('\n\n')
     returned_paragraphs = []
     for paragraph in paragraphs:
