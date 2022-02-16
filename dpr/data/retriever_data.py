@@ -396,6 +396,7 @@ class NewspaperArchiveCtxSrc(RetrieverData):
 
 
 class NewspaperArchiveCtxSrc_heads(RetrieverData):
+
     def __init__(
             self,
             path_pattern: str,
@@ -429,11 +430,7 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
             print(f"Selected random papers: {random_papers}")
 
         print("Creating bi-encoder dict...")
-        i = 0
         for file_path in tqdm(self.file_paths):
-
-            print(i)
-            i += 1
 
             with open(file_path, 'rb') as f:
                 items = ijson.kvitems(f, '')
@@ -446,7 +443,6 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
                         ocr_text_generators.append(self.ocr_text_iter(v))
 
             if len(ocr_text_generators) == 0:
-                print("Not in random papers")
                 continue
 
             for gen in ocr_text_generators:
@@ -456,6 +452,7 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
                     if self.normalize:
                         title = normalize_passage(title)
                         title = title.lower()
+                        print("Type A: ", type(tokenizer))
                         passage = take_max_model_paragraphs(passage, title, tokenizer)
                         passage = normalize_passage(passage)
                     ctxs[uid] = BiEncoderPassage(passage, title)
