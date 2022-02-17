@@ -493,8 +493,6 @@ class NewspaperArchiveCtxSrc_heads_daily(RetrieverData):
         print("Creating bi-encoder dict...")
         for file_path in tqdm(self.file_paths):
 
-            print(file_path)
-
             if year in file_path:
                 with open(file_path, 'rb') as f:
                     items = ijson.kvitems(f, '')
