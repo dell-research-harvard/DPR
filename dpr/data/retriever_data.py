@@ -481,8 +481,10 @@ class NewspaperArchiveCtxSrc_heads_daily(RetrieverData):
     def __init__(
             self,
             path_pattern: str,
+            id_prefix: str = None,
     ):
         self.file_paths = glob.glob(path_pattern)
+        self.id_prefix = id_prefix
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage], date="Jan-10-1968"):
 
