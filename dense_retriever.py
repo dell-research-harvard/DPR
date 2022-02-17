@@ -418,7 +418,7 @@ def main(cfg: DictConfig):
     else:
         k_top = cfg.n_docs
 
-    print(k_top)
+    print("**********!!!!!!!!!!!!!! NUMBER !!!!!!!!!!*******", k_top)
 
     top_ids_and_scores = retriever.get_top_docs(questions_tensor.numpy(), k_top)
 
