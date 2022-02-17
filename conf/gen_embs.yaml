@@ -1,5 +1,5 @@
 defaults:
-  - encoder: hf_bert
+  - encoder: hf_bart
   - ctx_sources: default_sources
 
 # A trained bi-encoder checkpoint file to initialize the model

@@ -24,6 +24,14 @@ newspaper_archive_heads:
   n_random_papers: False
   month: Jan
 
+newspaper_archive_heads_daily:
+  _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc_heads_daily
+  path_pattern: /mnt/data02/retrieval/preprocess/**/**/ocr_*
+  normalize: True
+  n_random_papers: False
+  startdate: Jan-20-1968
+  enddate: Feb-10-1968
+
 mnli_dev:
   _target_: dpr.data.retriever_data.MnliJsonlCtxSrc
   file: /mnt/data01/mnli_for_dpr_dev.jsonl

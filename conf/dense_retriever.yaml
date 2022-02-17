@@ -1,5 +1,5 @@
 defaults:
-  - encoder: hf_bert # defines encoder initialization parameters
+  - encoder: hf_bart # defines encoder initialization parameters
   - datasets: retriever_default # contains a list of all possible sources of queries for evaluation. Specific set is selected by qa_dataset parameter
   - ctx_sources: default_sources # contains a list of all possible passage sources. Specific passages sources selected by ctx_datatsets parameter
 
