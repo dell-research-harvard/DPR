@@ -14,6 +14,7 @@ import ijson
 import glob
 from tqdm import tqdm
 from transformers import BartTokenizerFast
+from datetime import datetime
 
 from dpr.data.biencoder_data import (
     BiEncoderPassage,
@@ -467,6 +468,54 @@ class NewspaperArchiveCtxSrc_heads(RetrieverData):
                     ctxs[uid] = BiEncoderPassage(passage, title)
 
     def ocr_text_iter(self, v):
+        for ik in v:
+            yield (ik['headline'], ik['article'], ik['id'])
+
+    @staticmethod
+    def get_paper_name(file_end):
+        return "-".join(file_end.split("-")[1:-5])
+
+
+class NewspaperArchiveCtxSrc_heads_daily(RetrieverData):
+
+    def __init__(
+            self,
+            path_pattern: str,
+    ):
+        self.file_paths = glob.glob(path_pattern)
+
+    def load_data_to(self, ctxs: Dict[object, BiEncoderPassage], date="Jan-10-1968"):
+
+        year = str(datetime.strptime(date, "%b-%d-%Y").year)
+
+        tokenizer = BartTokenizerFast.from_pretrained("facebook/bart-base")
+
+        print("Creating bi-encoder dict...")
+        for file_path in tqdm(self.file_paths):
+
+            if year in file_path:
+                with open(file_path, 'rb') as f:
+                    items = ijson.kvitems(f, '')
+                    ocr_text_generators = []
+                    for k, v in items:
+                        if date in k:
+                            ocr_text_generators.append(self.ocr_text_iter(v))
+
+                if len(ocr_text_generators) == 0:
+                    continue
+
+                for gen in ocr_text_generators:
+                    for layobj in gen:
+                        title, passage, object_id = layobj
+                        uid = object_id
+                        title = normalize_passage(title)
+                        title = title.lower()
+                        passage = take_max_model_paragraphs(passage, tokenizer)
+                        passage = normalize_passage(passage)
+                        ctxs[uid] = BiEncoderPassage(passage, title)
+
+    @staticmethod
+    def ocr_text_iter(v):
         for ik in v:
             yield (ik['headline'], ik['article'], ik['id'])
 

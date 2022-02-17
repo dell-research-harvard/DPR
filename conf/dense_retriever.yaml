@@ -30,6 +30,10 @@ match: string
 # How many context articles to return. Specify integer or "all".
 n_docs: all
 
+# Date range over which to retrieve
+startdate: Jan-20-1968
+enddate: Feb-10-1968
+
 validation_workers: 16
 
 # Batch size to generate query embeddings
