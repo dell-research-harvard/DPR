@@ -227,8 +227,6 @@ def save_results(
             merged_data = []
             strata_range = range(round(l * strata_size), round(((l + 1) * strata_size)))
 
-            print(strata_range)
-
             merged_data.append(
                 {
                     "ctxs": [
