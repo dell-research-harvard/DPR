@@ -161,7 +161,7 @@ def main(cfg: DictConfig):
         end_idx = start_idx + shard_size
 
         logger.info(
-            "Producing encodings for passages range: %d to %d (out of total %d)",
+            f"Producing encodings for {day_str} for passages range: %d to %d (out of total %d)",
             start_idx,
             end_idx,
             len(all_passages),
@@ -176,7 +176,7 @@ def main(cfg: DictConfig):
         with open(file, mode="wb") as f:
             pickle.dump(data, f)
 
-        logger.info("Total passages processed %d. Written to %s", len(data), file)
+        logger.info(f"Embedding finished for {day_str}. Total passages processed %d. Written to %s", len(data), file)
 
 
 if __name__ == "__main__":
