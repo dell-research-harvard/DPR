@@ -162,10 +162,11 @@ def main(cfg: DictConfig):
         end_idx = start_idx + shard_size
 
         logger.info(
-            f"Producing encodings for {day_str} for passages range: %d to %d (out of total %d)",
+            f"Producing encodings for {day_str} for passages range: %d to %d (out of total %d) in %d batches",
             start_idx,
             end_idx,
             len(all_passages),
+            len(all_passages)/cfg.batch_size
         )
         shard_passages = all_passages[start_idx:end_idx]
 
