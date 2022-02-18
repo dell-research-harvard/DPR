@@ -492,7 +492,7 @@ class NewspaperArchiveCtxSrc_heads_daily(RetrieverData):
 
         tokenizer = BartTokenizerFast.from_pretrained("facebook/bart-base")
 
-        print("Creating bi-encoder dict...")
+        print(f"Creating bi-encoder dict for {date}...")
         for file_path in tqdm(self.file_paths):
 
             if year in file_path:
