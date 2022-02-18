@@ -365,9 +365,6 @@ def main(cfg: DictConfig):
         logger.info("Using custom representation token selector")
         retriever.selector = qa_src.selector
 
-    print(cfg.encoded_ctx_files)
-    raise ValueError("Stop")
-
     # index all passages
     if cfg.start_date and cfg.end_date:
         ctx_files_patterns = []
@@ -377,17 +374,25 @@ def main(cfg: DictConfig):
         for i in range(delta.days + 1):
             day = start + timedelta(days=i)
             day_str = day.strftime("%b-%d-%Y")
-            ctx_files_patterns.append()
+            ctx_files_patterns.append(cfg.encoded_ctx_files + "embedded_" + day_str + "_0")
     else:
         ctx_files_patterns = cfg.encoded_ctx_files
+
     index_path = cfg.index_path
 
     id_prefixes = []
     ctx_sources = []
-    for ctx_src in cfg.ctx_datatsets:
-        ctx_src = hydra.utils.instantiate(cfg.ctx_sources[ctx_src])
-        id_prefixes.append(ctx_src.id_prefix)
-        ctx_sources.append(ctx_src)
+
+    if cfg.start_date and cfg.end_date:
+        for date in ctx_files_patterns:
+            ctx_src = hydra.utils.instantiate(cfg.ctx_sources[0])
+            id_prefixes.append(ctx_src.id_prefix)
+            ctx_sources.append(ctx_src)
+    else:
+        for ctx_src in cfg.ctx_datatsets:
+            ctx_src = hydra.utils.instantiate(cfg.ctx_sources[ctx_src])
+            id_prefixes.append(ctx_src.id_prefix)
+            ctx_sources.append(ctx_src)
 
     logger.info("id_prefixes per dataset: %s", id_prefixes)
 
