@@ -225,7 +225,7 @@ def save_results(
 
         for l in range(n_strata):
             merged_data = []
-            strata_range = range(l * strata_size, ((l + 1) * strata_size) - 1)
+            strata_range = range(l * strata_size, ((l + 1) * strata_size))
 
             print(strata_range)
 
