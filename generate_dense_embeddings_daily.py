@@ -170,7 +170,7 @@ def main(cfg: DictConfig):
 
         data = gen_ctx_vectors(cfg, shard_passages, encoder, tensorizer, cfg.title_embed)
 
-        file = cfg.out_file + day_str + "_" + str(cfg.shard_id)
+        file = cfg.out_file + "_" + day_str + "_" + str(cfg.shard_id)
         pathlib.Path(os.path.dirname(file)).mkdir(parents=True, exist_ok=True)
         logger.info("Writing results to %s" % file)
         with open(file, mode="wb") as f:
