@@ -31,8 +31,8 @@ match: string
 n_docs: all
 
 # Date range over which to retrieve
-startdate: Jan-20-1968
-enddate: Feb-10-1968
+start_date:
+end_date:
 
 validation_workers: 16
 
