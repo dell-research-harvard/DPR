@@ -216,7 +216,7 @@ def save_results(
         docs = [passages[doc_id] for doc_id in results_and_scores[0]]
         scores = [str(score) for score in results_and_scores[1]]
         ctxs_num = len(hits)
-        strata_size = round(ctxs_num / n_strata)
+        strata_size = ctxs_num / n_strata
 
         print("ctx_num", len(hits))
         print("Number of scores ", len(scores))
@@ -225,7 +225,7 @@ def save_results(
 
         for l in range(n_strata):
             merged_data = []
-            strata_range = range(l * strata_size, ((l + 1) * strata_size))
+            strata_range = range(round(l * strata_size), round(((l + 1) * strata_size)))
 
             print(strata_range)
 
