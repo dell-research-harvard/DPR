@@ -218,11 +218,11 @@ def save_results(
         ctxs_num = len(hits)
         strata_size = round(ctxs_num / n_strata)
 
+        print("Number of examples ", ctxs_num)
+
         for l in range(n_strata):
             merged_data = []
             strata_range = range(l * strata_size, ((l + 1) * strata_size) - 1)
-
-            print(strata_range)
 
             merged_data.append(
                 {
