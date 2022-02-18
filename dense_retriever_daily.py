@@ -410,8 +410,10 @@ def main(cfg: DictConfig):
 
     # get top k results
     all_passages = {}
+    i = 0
     for ctx_src in ctx_sources:
-        ctx_src.load_data_from(all_passages, input_paths)
+        ctx_src.load_data_from(all_passages, input_paths[i])
+        i += 1
 
     if len(all_passages) == 0:
         raise RuntimeError(
