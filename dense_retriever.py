@@ -222,6 +222,8 @@ def save_results(
             merged_data = []
             strata_range = range(l * strata_size, ((l + 1) * strata_size) - 1)
 
+            print(strata_range)
+
             merged_data.append(
                 {
                     "ctxs": [
@@ -417,8 +419,6 @@ def main(cfg: DictConfig):
         k_top = len(all_passages)
     else:
         k_top = cfg.n_docs
-
-    print("**********!!!!!!!!!!!!!! NUMBER !!!!!!!!!!*******", k_top)
 
     top_ids_and_scores = retriever.get_top_docs(questions_tensor.numpy(), k_top)
 
