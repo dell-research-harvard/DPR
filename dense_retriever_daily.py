@@ -378,13 +378,16 @@ def main(cfg: DictConfig):
     else:
         ctx_files_patterns = cfg.encoded_ctx_files
 
+    print("FILE PATTERNS: ", ctx_files_patterns)
+
     index_path = cfg.index_path
 
     id_prefixes = []
     ctx_sources = []
     if cfg.start_date and cfg.end_date:
         for date in ctx_files_patterns:
-            ctx_src = hydra.utils.instantiate(cfg.ctx_sources[0])
+            ctx_src = cfg.ctx_datatsets[0]
+            ctx_src = hydra.utils.instantiate(cfg.ctx_sources[ctx_src])
             id_prefixes.append(ctx_src.id_prefix)
             ctx_sources.append(ctx_src)
     else:
