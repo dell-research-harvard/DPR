@@ -410,10 +410,12 @@ def main(cfg: DictConfig):
 
     # get top k results
     all_passages = {}
+    i = 0
     for ctx_src in ctx_sources:
-        print(ctx_src)
-        date = ctx_src.split("/")[-1].split("_")[1]
+        print(cfg.ctx_datatsets[i])
+        date = cfg.ctx_datatsets[i].split("/")[-1].split("_")[1]
         ctx_src.load_data_to(all_passages, date)
+        i += 1
 
     if len(all_passages) == 0:
         raise RuntimeError(
