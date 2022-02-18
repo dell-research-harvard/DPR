@@ -218,7 +218,9 @@ def save_results(
         ctxs_num = len(hits)
         strata_size = round(ctxs_num / n_strata)
 
-        print("Number of examples ", ctxs_num)
+        print("Number of scores ", len(scores))
+        print("Number of docs ", len(docs))
+        print("Number of results and scores ", len(results_and_scores))
 
         for l in range(n_strata):
             merged_data = []
