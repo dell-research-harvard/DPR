@@ -516,37 +516,37 @@ class NewspaperArchiveCtxSrc_heads_daily(RetrieverData):
                         passage = normalize_passage(passage)
                         ctxs[uid] = BiEncoderPassage(passage, title)
 
-    def load_data_from(self, ctxs: Dict[object, BiEncoderPassage], list_of_paths):
+    def load_data_from(self, ctxs: Dict[object, BiEncoderPassage], path):
 
-        for path in list_of_paths:
-            date = path.split("/")[-1].split("_")[1]
-            year = str(datetime.strptime(date, "%b-%d-%Y").year)
+        # for path in list_of_paths:
+        date = path.split("/")[-1].split("_")[1]
+        year = str(datetime.strptime(date, "%b-%d-%Y").year)
 
-            tokenizer = BartTokenizerFast.from_pretrained("facebook/bart-base")
+        tokenizer = BartTokenizerFast.from_pretrained("facebook/bart-base")
 
-            print(f"Creating bi-encoder dict for {date}...")
-            for file_path in tqdm(self.file_paths):
+        print(f"Creating bi-encoder dict for {date}...")
+        for file_path in tqdm(self.file_paths):
 
-                if year in file_path:
-                    with open(file_path, 'rb') as f:
-                        items = ijson.kvitems(f, '')
-                        ocr_text_generators = []
-                        for k, v in items:
-                            if date in k:
-                                ocr_text_generators.append(self.ocr_text_iter(v))
+            if year in file_path:
+                with open(file_path, 'rb') as f:
+                    items = ijson.kvitems(f, '')
+                    ocr_text_generators = []
+                    for k, v in items:
+                        if date in k:
+                            ocr_text_generators.append(self.ocr_text_iter(v))
 
-                    if len(ocr_text_generators) == 0:
-                        continue
+                if len(ocr_text_generators) == 0:
+                    continue
 
-                    for gen in ocr_text_generators:
-                        for layobj in gen:
-                            title, passage, object_id = layobj
-                            uid = object_id
-                            title = normalize_passage(title)
-                            title = title.lower()
-                            passage = take_max_model_paragraphs(passage, tokenizer)
-                            passage = normalize_passage(passage)
-                            ctxs[uid] = BiEncoderPassage(passage, title)
+                for gen in ocr_text_generators:
+                    for layobj in gen:
+                        title, passage, object_id = layobj
+                        uid = object_id
+                        title = normalize_passage(title)
+                        title = title.lower()
+                        passage = take_max_model_paragraphs(passage, tokenizer)
+                        passage = normalize_passage(passage)
+                        ctxs[uid] = BiEncoderPassage(passage, title)
 
 
     @staticmethod
