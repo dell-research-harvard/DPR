@@ -374,7 +374,7 @@ def main(cfg: DictConfig):
         for i in range(delta.days + 1):
             day = start + timedelta(days=i)
             day_str = day.strftime("%b-%d-%Y")
-            ctx_files_patterns.append(cfg.encoded_ctx_files + "embedded_" + day_str + "_0")
+            ctx_files_patterns.append(cfg.encoded_ctx_files[0] + "embedded_" + day_str + "_0")
     else:
         ctx_files_patterns = cfg.encoded_ctx_files
 
@@ -382,7 +382,6 @@ def main(cfg: DictConfig):
 
     id_prefixes = []
     ctx_sources = []
-
     if cfg.start_date and cfg.end_date:
         for date in ctx_files_patterns:
             ctx_src = hydra.utils.instantiate(cfg.ctx_sources[0])
