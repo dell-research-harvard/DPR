@@ -412,7 +412,8 @@ def main(cfg: DictConfig):
     all_passages = {}
     i = 0
     for ctx_src in ctx_sources:
-        ctx_src.load_data_from(all_passages, input_paths[i])
+        date = input_paths[i].split("/")[-1].split("_")[1]
+        ctx_src.load_data_to(all_passages, date)
         i += 1
 
     if len(all_passages) == 0:
