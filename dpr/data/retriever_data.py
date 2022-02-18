@@ -486,7 +486,7 @@ class NewspaperArchiveCtxSrc_heads_daily(RetrieverData):
         self.file_paths = glob.glob(path_pattern)
         self.id_prefix = id_prefix
 
-    def load_data_to(self, ctxs: Dict[object, BiEncoderPassage], date="Jan-10-1968"):
+    def load_data_to(self, ctxs: Dict[object, BiEncoderPassage], date):
 
         year = str(datetime.strptime(date, "%b-%d-%Y").year)
 
