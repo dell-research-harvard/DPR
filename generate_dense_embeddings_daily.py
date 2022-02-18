@@ -51,7 +51,9 @@ def gen_ctx_vectors(
     bsz = cfg.batch_size
     total = 0
     results = []
-    for j, batch_start in tqdm(enumerate(range(0, n, bsz))):
+
+    pbar = tqdm(total=n)
+    for j, batch_start in enumerate(range(0, n, bsz)):
         batch = ctx_rows[batch_start : batch_start + bsz]
         batch_token_tensors = [
             tensorizer.text_to_tensor(
@@ -91,6 +93,7 @@ def gen_ctx_vectors(
                 [(ctx_ids[i], out[i].view(-1).numpy()) for i in range(out.size(0))]
             )
 
+        pbar.update(n=1)
         # if total % 10 == 0:
         #     logger.info("Encoded passages %d", total)
     return results
