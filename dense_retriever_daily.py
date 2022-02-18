@@ -16,6 +16,7 @@ import pickle
 import time
 from typing import List, Tuple, Dict, Iterator
 import os
+from datetime import datetime, timedelta
 
 import hydra
 import numpy as np
@@ -364,6 +365,23 @@ def main(cfg: DictConfig):
         logger.info("Using custom representation token selector")
         retriever.selector = qa_src.selector
 
+    print(cfg.encoded_ctx_files)
+    raise ValueError("Stop")
+
+    # index all passages
+    if cfg.start_date and cfg.end_date:
+        ctx_files_patterns = []
+        start = datetime.strptime(cfg.start_date, "%b-%d-%Y")
+        end = datetime.strptime(cfg.end_date, "%b-%d-%Y")
+        delta = end - start
+        for i in range(delta.days + 1):
+            day = start + timedelta(days=i)
+            day_str = day.strftime("%b-%d-%Y")
+            ctx_files_patterns.append()
+    else:
+        ctx_files_patterns = cfg.encoded_ctx_files
+    index_path = cfg.index_path
+
     id_prefixes = []
     ctx_sources = []
     for ctx_src in cfg.ctx_datatsets:
@@ -372,10 +390,6 @@ def main(cfg: DictConfig):
         ctx_sources.append(ctx_src)
 
     logger.info("id_prefixes per dataset: %s", id_prefixes)
-
-    # index all passages
-    ctx_files_patterns = cfg.encoded_ctx_files
-    index_path = cfg.index_path
 
     logger.info("ctx_files_patterns: %s", ctx_files_patterns)
     if ctx_files_patterns:
