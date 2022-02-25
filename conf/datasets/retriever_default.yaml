@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: This article is about Cutter laboratories.
+  question: This article is about DDT.
   answer: No answer by design.
   id: 0
