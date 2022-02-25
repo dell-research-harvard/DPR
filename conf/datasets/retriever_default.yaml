@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: This example is about Rachel Carson.
+  question: This example is about Silent Spring.
   answer: No answer by design.
   id: 0
