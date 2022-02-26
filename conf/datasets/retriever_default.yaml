@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: This article is about pesticides.
+  question: The topic of this article is DDT.
   answer: No answer by design.
   id: 0
