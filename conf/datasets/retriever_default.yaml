@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: The topic of this article is the Vietnam war.
+  question: The topic of this article is polio vaccines.
   answer: No answer by design.
   id: 0
