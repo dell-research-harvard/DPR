@@ -38,7 +38,6 @@ BiEncoderBatch = collections.namedtuple(
         "encoder_type",
     ],
 )
-# TODO: it is only used by _select_span_with_token. Move them to utils
 rnd = random.Random(0)
 
 
@@ -146,7 +145,6 @@ class BiEncoder(nn.Module):
 
         return q_pooled_out, ctx_pooled_out
 
-    # TODO delete once moved to the new method
     @classmethod
     def create_biencoder_input(
         cls,
@@ -321,7 +319,6 @@ class BiEncoder(nn.Module):
             )
 
             if query_token:
-                # TODO: tmp workaround for EL, remove or revise
                 if query_token == "[START_ENT]":
                     query_span = _select_span_with_token(
                         question, tensorizer, token_str=query_token
@@ -351,7 +348,6 @@ class BiEncoder(nn.Module):
         )
 
     def load_state(self, saved_state: CheckpointState):
-        # TODO: make a long term HF compatibility fix
         if "question_model.embeddings.position_ids" in saved_state.model_dict:
             del saved_state.model_dict["question_model.embeddings.position_ids"]
             del saved_state.model_dict["ctx_model.embeddings.position_ids"]

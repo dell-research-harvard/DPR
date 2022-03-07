@@ -12,10 +12,21 @@ dpr_wiki_by_path:
 
 newspaper_archive:
   _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc
-  path_pattern: /mnt/data01/pipeline_backup/pipeline_egress/all_scans_dbx_text_files_1968/**/ocr_*
+  path_pattern: /mnt/data02/retrieval/retrieval_test/100_full_paper_samp/*
   layout_object: article
-  n_random_papers: 100
+  n_random_papers: False
   normalize: True
+
+newspaper_archive_heads:
+  _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc_heads
+  path_pattern: /mnt/data02/retrieval/preprocess/all_scans_dbx_text_files_1968_full_bl_211112/**/ocr_*
+  normalize: True
+  n_random_papers: False
+  month: Jan
+
+newspaper_archive_heads_daily:
+  _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc_heads_daily
+  path_pattern: /mnt/data02/retrieval/preprocess/rule_based_outputs/**/**/ocr_*
 
 mnli_dev:
   _target_: dpr.data.retriever_data.MnliJsonlCtxSrc

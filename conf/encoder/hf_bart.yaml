@@ -1,10 +1,10 @@
 # @package _group_
 
 # model type. One of [hf_bert, pytext_bert, fairseq_roberta]
-encoder_model_type: hf_bert
+encoder_model_type: hf_bart
 
 # HuggingFace's config name for model initialization
-pretrained_model_cfg: facebook/bart-large # distilroberta-base
+pretrained_model_cfg: facebook/bart-large
 
 # Some encoders need to be initialized from a file
 pretrained_file:

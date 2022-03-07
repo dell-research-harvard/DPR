@@ -13,11 +13,12 @@ from omegaconf import DictConfig
 import ijson
 import glob
 from tqdm import tqdm
+from transformers import BartTokenizerFast
+from datetime import datetime
 
 from dpr.data.biencoder_data import (
     BiEncoderPassage,
     normalize_passage,
-    take_max_roberta_paragraphs,
     normalize_question,
     get_dpr_files,
     read_nq_tables_jsonl,
@@ -337,9 +338,7 @@ class NewspaperArchiveCtxSrc(RetrieverData):
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
 
-        if self.layout_object == "article":
-            from transformers import RobertaTokenizerFast
-            tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
+        tokenizer = BartTokenizerFast.from_pretrained("facebook/bart-base")
 
         if self.n_random_papers:
             print("Random newspaper subset...")
@@ -379,7 +378,7 @@ class NewspaperArchiveCtxSrc(RetrieverData):
                             passage = normalize_passage(passage)
                             passage = passage.lower()
                         else:
-                            passage = take_max_roberta_paragraphs(passage, tokenizer)
+                            passage = take_max_model_paragraphs(passage, tokenizer)
                             passage = normalize_passage(passage)
                     ctxs[uid] = BiEncoderPassage(passage, title)
 
@@ -388,9 +387,139 @@ class NewspaperArchiveCtxSrc(RetrieverData):
             if ik['label'] == self.layout_object:
                 if self.page_filter:
                     if not ik['image_file_name'].split('.')[0].endswith(f'p-{self.page_filter}'):
-                        yield (ik['image_file_name'], ik['ocr_text'], ik['object_id'])
+                        yield (ik['image_file_name'], ik['ocr_text'], ik['object_id'])                                  # defines title, passage, object_id
                 else:
                     yield (ik['image_file_name'], ik['ocr_text'], ik['object_id'])
+
+    @staticmethod
+    def get_paper_name(file_end):
+        return "-".join(file_end.split("-")[1:-5])
+
+
+class NewspaperArchiveCtxSrc_heads(RetrieverData):
+
+    def __init__(
+            self,
+            path_pattern: str,
+            normalize: bool = False,
+            id_prefix: str = None,
+            n_random_papers: bool = False,
+            month: str = None,
+    ):
+        self.normalize = normalize
+        self.file_paths = glob.glob(path_pattern)
+        self.id_prefix = id_prefix
+        self.n_random_papers = n_random_papers
+        self.month_str = "-" + month + "-"
+
+    def load_data_to(self, ctxs: Dict[object, BiEncoderPassage]):
+
+        tokenizer = BartTokenizerFast.from_pretrained("facebook/bart-base")
+
+        if self.n_random_papers:
+            print("Random newspaper subset...")
+            scan_names = []
+            for file_path in tqdm(self.file_paths):
+                with open(file_path, 'rb') as f:
+                    items = ijson.kvitems(f, '')
+                    for k, v in items:
+                        scan_names.append(k)
+            papers = list(set([self.get_paper_name(scan) for scan in scan_names]))
+            papers.sort()
+            print(f"{len(papers)} total papers...")
+
+            random.seed(789)
+            random_papers = random.sample(papers, self.n_random_papers)
+            print(f"Selected random papers: {random_papers}")
+
+        print("Creating bi-encoder dict...")
+        for file_path in tqdm(self.file_paths):
+
+            with open(file_path, 'rb') as f:
+                items = ijson.kvitems(f, '')
+                ocr_text_generators = []
+                for k, v in items:
+                    if self.month_str:
+                        if self.month_str in k:
+                            if self.n_random_papers:
+                                if self.get_paper_name(k) in random_papers:
+                                    ocr_text_generators.append(self.ocr_text_iter(v))
+                            else:
+                                ocr_text_generators.append(self.ocr_text_iter(v))
+                    else:
+                        if self.n_random_papers:
+                            if self.get_paper_name(k) in random_papers:
+                                ocr_text_generators.append(self.ocr_text_iter(v))
+                        else:
+                            ocr_text_generators.append(self.ocr_text_iter(v))
+
+            if len(ocr_text_generators) == 0:
+                continue
+
+            for gen in ocr_text_generators:
+                for layobj in gen:
+                    title, passage, object_id = layobj
+                    uid = object_id
+                    if self.normalize:
+                        title = normalize_passage(title)
+                        title = title.lower()
+                        passage = take_max_model_paragraphs(passage, tokenizer)
+                        passage = normalize_passage(passage)
+                    ctxs[uid] = BiEncoderPassage(passage, title)
+
+    def ocr_text_iter(self, v):
+        for ik in v:
+            yield (ik['headline'], ik['article'], ik['id'])
+
+    @staticmethod
+    def get_paper_name(file_end):
+        return "-".join(file_end.split("-")[1:-5])
+
+
+class NewspaperArchiveCtxSrc_heads_daily(RetrieverData):
+
+    def __init__(
+            self,
+            path_pattern: str,
+            id_prefix: str = None,
+    ):
+        self.file_paths = glob.glob(path_pattern)
+        self.id_prefix = id_prefix
+
+    def load_data_to(self, ctxs: Dict[object, BiEncoderPassage], date):
+
+        year = "_" + str(datetime.strptime(date, "%b-%d-%Y").year) + "_"
+
+        tokenizer = BartTokenizerFast.from_pretrained("facebook/bart-base")
+
+        print(f"Creating bi-encoder dict for {date}...")
+        for file_path in tqdm(self.file_paths):
+
+            if year in file_path:
+                with open(file_path, 'rb') as f:
+                    items = ijson.kvitems(f, '')
+                    ocr_text_generators = []
+                    for k, v in items:
+                        if date in k:
+                            ocr_text_generators.append(self.ocr_text_iter(v))
+
+                if len(ocr_text_generators) == 0:
+                    continue
+
+                for gen in ocr_text_generators:
+                    for layobj in gen:
+                        title, passage, object_id = layobj
+                        uid = object_id
+                        title = normalize_passage(title)
+                        title = title.lower()
+                        passage = take_max_model_paragraphs(passage, tokenizer)
+                        passage = normalize_passage(passage)
+                        ctxs[uid] = BiEncoderPassage(passage, title)
+
+    @staticmethod
+    def ocr_text_iter(v):
+        for ik in v:
+            yield (ik['headline'], ik['article'], ik['id'])
 
     @staticmethod
     def get_paper_name(file_end):
@@ -536,3 +665,21 @@ class JsonlTablesCtxSrc(object):
             docs[sample_id] = TableChunk(chunk[1], chunk[2], chunk[3])
         logger.info("Loaded %d tables chunks", len(docs))
         ctxs.update(docs)
+
+
+def take_max_model_paragraphs(ctx_text, tokenizer, tok_space=510, tok_max=512):
+
+    paragraphs = ctx_text.split('\n\n')
+    returned_paragraphs = []
+    for paragraph in paragraphs:
+        para_tokens = tokenizer(paragraph)['input_ids']
+        n_tok = len(para_tokens) - 2 + 1
+        tok_space -= n_tok
+        if tok_space <= 0 and len(returned_paragraphs) == 0:
+            return tokenizer.decode(para_tokens[1:tok_max])
+        elif tok_space <= 0:
+            return "\n".join(returned_paragraphs)
+        else:
+            returned_paragraphs.append(paragraph)
+    return "\n".join(returned_paragraphs)
+

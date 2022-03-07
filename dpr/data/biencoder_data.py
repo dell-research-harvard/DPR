@@ -57,10 +57,7 @@ class RepSpecificTokenSelector(RepTokenSelector):
         token_indexes_result = []
         found_idx_cnt = 0
         for i in range(bsz):
-            if (
-                found_idx_cnt < token_indexes.size(0)
-                and token_indexes[found_idx_cnt][0] == i
-            ):
+            if found_idx_cnt < token_indexes.size(0) and token_indexes[found_idx_cnt][0] == i:
                 # this samples has the special token
                 token_indexes_result.append(token_indexes[found_idx_cnt])
                 found_idx_cnt += 1
@@ -79,12 +76,12 @@ DEFAULT_SELECTOR = RepStaticPosTokenSelector()
 
 class Dataset(torch.utils.data.Dataset):
     def __init__(
-        self,
-        selector: DictConfig = None,
-        special_token: str = None,
-        shuffle_positives: bool = False,
-        query_special_suffix: str = None,
-        encoder_type: str = None,
+            self,
+            selector: DictConfig = None,
+            special_token: str = None,
+            shuffle_positives: bool = False,
+            query_special_suffix: str = None,
+            encoder_type: str = None,
     ):
         if selector:
             self.selector = hydra.utils.instantiate(selector)
@@ -122,14 +119,14 @@ def get_dpr_files(source_name) -> List[str]:
 
 class JsonQADataset(Dataset):
     def __init__(
-        self,
-        file: str,
-        selector: DictConfig = None,
-        special_token: str = None,
-        encoder_type: str = None,
-        shuffle_positives: bool = False,
-        normalize: bool = False,
-        query_special_suffix: str = None,
+            self,
+            file: str,
+            selector: DictConfig = None,
+            special_token: str = None,
+            encoder_type: str = None,
+            shuffle_positives: bool = False,
+            normalize: bool = False,
+            query_special_suffix: str = None,
     ):
         super().__init__(
             selector,
@@ -157,14 +154,8 @@ class JsonQADataset(Dataset):
         r.query = self._process_query(json_sample["question"])
 
         positive_ctxs = json_sample["positive_ctxs"]
-        negative_ctxs = (
-            json_sample["negative_ctxs"] if "negative_ctxs" in json_sample else []
-        )
-        hard_negative_ctxs = (
-            json_sample["hard_negative_ctxs"]
-            if "hard_negative_ctxs" in json_sample
-            else []
-        )
+        negative_ctxs = json_sample["negative_ctxs"] if "negative_ctxs" in json_sample else []
+        hard_negative_ctxs = json_sample["hard_negative_ctxs"] if "hard_negative_ctxs" in json_sample else []
 
         for ctx in positive_ctxs + negative_ctxs + hard_negative_ctxs:
             if "title" not in ctx:
@@ -187,9 +178,7 @@ class JsonQADataset(Dataset):
     def get_qas(self) -> Tuple[List[str], List[str]]:
         return [s["question"] for s in self.data], [s["answers"] for s in self.data]
 
-    def get_qas_range(
-        self, start_idx: int, end_idx: int
-    ) -> Tuple[List[str], List[str]]:
+    def get_qas_range(self, start_idx: int, end_idx: int) -> Tuple[List[str], List[str]]:
         return (
             [s["question"] for s in self.data[start_idx:end_idx]],
             [s["answers"] for s in self.data[start_idx:end_idx]],
@@ -198,14 +187,14 @@ class JsonQADataset(Dataset):
 
 class CustomJsonQADataset(Dataset):
     def __init__(
-        self,
-        file_path: str,
-        selector: DictConfig = None,
-        special_token: str = None,
-        encoder_type: str = None,
-        shuffle_positives: bool = False,
-        normalize: bool = False,
-        query_special_suffix: str = None,
+            self,
+            file_path: str,
+            selector: DictConfig = None,
+            special_token: str = None,
+            encoder_type: str = None,
+            shuffle_positives: bool = False,
+            normalize: bool = False,
+            query_special_suffix: str = None,
     ):
         super().__init__(
             selector,
@@ -244,26 +233,22 @@ class CustomJsonQADataset(Dataset):
         for ctx in positive_ctxs + negative_ctxs + hard_negative_ctxs:
             if "title" not in ctx:
                 ctx["title"] = None
-
         def create_passage(ctx: dict):
             return BiEncoderPassage(
                 normalize_passage(ctx["text"]) if self.normalize else ctx["text"],
                 ctx["title"],
             )
-
         r.positive_passages = [create_passage(ctx) for ctx in positive_ctxs]
         r.negative_passages = [create_passage(ctx) for ctx in negative_ctxs]
         r.hard_negative_passages = [create_passage(ctx) for ctx in hard_negative_ctxs]
         return r
-
     def __len__(self):
         return len(self.data)
-
     def get_qas(self) -> Tuple[List[str], List[str]]:
         return [s["question"] for s in self.data], [s["answers"] for s in self.data]
 
     def get_qas_range(
-        self, start_idx: int, end_idx: int
+            self, start_idx: int, end_idx: int
     ) -> Tuple[List[str], List[str]]:
         return (
             [s["question"] for s in self.data[start_idx:end_idx]],
@@ -279,22 +264,6 @@ def normalize_passage(ctx_text: str):
     ctx_text = ctx_text.strip()
     return ctx_text
 
-
-def take_max_roberta_paragraphs(ctx_text, tokenizer, tok_space = 510, tok_max = 512):
-    paragraphs = ctx_text.split('\n\n')
-    returned_paragraphs = []
-    for paragraph in paragraphs:
-        para_tokens = tokenizer(paragraph)['input_ids']
-        n_tok = len(para_tokens) - 2 + 1
-        tok_space -= n_tok
-        if tok_space <= 0 and len(returned_paragraphs) == 0:
-            return tokenizer.decode(para_tokens[1:tok_max])
-        elif tok_space <= 0:
-            return "\n".join(returned_paragraphs)
-        else:
-            returned_paragraphs.append(paragraph)
-    return "\n".join(returned_paragraphs)
-        
 
 def normalize_question(question: str) -> str:
     question = question.replace("’", "'")
@@ -489,13 +458,7 @@ def read_nq_tables_jsonl(path: str) -> Dict[str, Table]:
                 total_tables += 1
 
                 # calc amount of non empty rows
-                non_empty_rows = sum(
-                    [
-                        1
-                        for r in t.body
-                        if r.cells and any([True for c in r.cells if c.value_tokens])
-                    ]
-                )
+                non_empty_rows = sum([1 for r in t.body if r.cells and any([True for c in r.cells if c.value_tokens])])
 
                 if non_empty_rows <= 1:
                     single_row_tables += 1
@@ -526,15 +489,15 @@ def get_table_string_for_answer_check(table: Table):  # this doesn't use caption
 
 class JsonLTablesQADataset(Dataset):
     def __init__(
-        self,
-        file: str,
-        is_train_set: bool,
-        selector: DictConfig = None,
-        shuffle_positives: bool = False,
-        max_negatives: int = 1,
-        seed: int = 0,
-        max_len=100,
-        split_type: str = "type1",
+            self,
+            file: str,
+            is_train_set: bool,
+            selector: DictConfig = None,
+            shuffle_positives: bool = False,
+            max_negatives: int = 1,
+            seed: int = 0,
+            max_len=100,
+            split_type: str = "type1",
     ):
         super().__init__(selector, shuffle_positives=shuffle_positives)
         self.data_files = glob.glob(file)
@@ -571,13 +534,11 @@ class JsonLTablesQADataset(Dataset):
         hard_negative_ctxs = hard_negative_ctxs[0 : self.max_negatives]
 
         r.positive_passages = [
-            BiEncoderPassage(self.linearize_func(self, ctx, True), ctx["caption"])
-            for ctx in positive_ctxs
+            BiEncoderPassage(self.linearize_func(self, ctx, True), ctx["caption"]) for ctx in positive_ctxs
         ]
         r.negative_passages = []
         r.hard_negative_passages = [
-            BiEncoderPassage(self.linearize_func(self, ctx, False), ctx["caption"])
-            for ctx in hard_negative_ctxs
+            BiEncoderPassage(self.linearize_func(self, ctx, False), ctx["caption"]) for ctx in hard_negative_ctxs
         ]
         return r
 
@@ -689,7 +650,7 @@ class JsonLTablesQADataset(Dataset):
 
 
 def split_tables_to_chunks(
-    tables_dict: Dict[str, Table], max_table_len: int, split_type: str = "type1"
+        tables_dict: Dict[str, Table], max_table_len: int, split_type: str = "type1"
 ) -> List[Tuple[int, str, str, int]]:
     tables_as_dicts = [t.to_dpr_json() for k, t in tables_dict.items()]
     chunks = []

@@ -1,7 +1,7 @@
 
 # configuration groups
 defaults:
-  - encoder: hf_bert
+  - encoder: hf_bart
   - train: biencoder_mnli
   - datasets: encoder_train_default
 
@@ -12,7 +12,7 @@ train_sampling_rates:
 loss_scale_factors:
 
 # Whether to lower case the input text. Set True for uncased models, False for the cased ones.
-do_lower_case: False
+do_lower_case: True
 
 fix_ctx_encoder: False
 val_av_rank_start_epoch: 30
@@ -22,7 +22,6 @@ checkpoint_file_name: dpr_biencoder_mnli
 # A trained bi-encoder checkpoint file to initialize the model
 model_file:
 
-# TODO: move to a conf group
 # local_rank for distributed training on gpus
 local_rank: -1
 global_loss_buf_sz: 592000

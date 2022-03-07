@@ -1,8 +1,9 @@
 defaults:
-  - encoder: hf_bert # defines encoder initialization parameters
+  - encoder: hf_bart # defines encoder initialization parameters
   - datasets: retriever_default # contains a list of all possible sources of queries for evaluation. Specific set is selected by qa_dataset parameter
   - ctx_sources: default_sources # contains a list of all possible passage sources. Specific passages sources selected by ctx_datatsets parameter
 
+# "indexers:" - a parameters map that defines various indexes. The actual index is selected by indexer parameter (below) which is 'flat' by default.
 indexers:
   flat:
     _target_: dpr.indexer.faiss_indexers.DenseFlatIndexer
@@ -25,7 +26,14 @@ encoded_ctx_files: []
 out_file:
 # "regex" or "string"
 match: string
-n_docs: 2000
+
+# How many context articles to return. Specify integer or "all".
+n_docs: all
+
+# Date range over which to retrieve
+start_date:
+end_date:
+
 validation_workers: 16
 
 # Batch size to generate query embeddings
@@ -51,12 +59,13 @@ model_file:
 
 validate_as_tables: False
 rpc_retriever_cfg_file:
+
+# Can use loss index types by setting indexer: hnsw or indexer: hnsw_sq
 indexer: flat
 
 # tokens which won't be slit by tokenizer
 special_tokens:
 
-# TODO: move to a conf group
 # local_rank for distributed training on gpus
 local_rank: -1
 global_loss_buf_sz: 150000
@@ -69,3 +78,6 @@ fp16: False
 # For fp16: Apex AMP optimization level selected in ['O0', 'O1', 'O2', and 'O3']."
 #        "See details at https://nvidia.github.io/apex/amp.html
 fp16_opt_level: O1
+
+# Number of strata for output files
+num_strat: 50

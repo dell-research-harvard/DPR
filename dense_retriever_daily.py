@@ -16,6 +16,7 @@ import pickle
 import time
 from typing import List, Tuple, Dict, Iterator
 import os
+from datetime import datetime, timedelta
 
 import hydra
 import numpy as np
@@ -364,18 +365,38 @@ def main(cfg: DictConfig):
         logger.info("Using custom representation token selector")
         retriever.selector = qa_src.selector
 
+    # index all passages
+    if cfg.start_date and cfg.end_date:
+        ctx_files_patterns = []
+        start = datetime.strptime(cfg.start_date, "%b-%d-%Y")
+        end = datetime.strptime(cfg.end_date, "%b-%d-%Y")
+        delta = end - start
+        for i in range(delta.days + 1):
+            day = start + timedelta(days=i)
+            day_str = day.strftime("%b-%d-%Y")
+            ctx_files_patterns.append(cfg.encoded_ctx_files[0] + "embedded_" + day_str + "_0")
+    else:
+        ctx_files_patterns = cfg.encoded_ctx_files
+
+    print("FILE PATTERNS: ", ctx_files_patterns)
+
+    index_path = cfg.index_path
+
     id_prefixes = []
     ctx_sources = []
-    for ctx_src in cfg.ctx_datatsets:
-        ctx_src = hydra.utils.instantiate(cfg.ctx_sources[ctx_src])
-        id_prefixes.append(ctx_src.id_prefix)
-        ctx_sources.append(ctx_src)
+    if cfg.start_date and cfg.end_date:
+        for date in ctx_files_patterns:
+            ctx_src = cfg.ctx_datatsets[0]
+            ctx_src = hydra.utils.instantiate(cfg.ctx_sources[ctx_src])
+            id_prefixes.append(ctx_src.id_prefix)
+            ctx_sources.append(ctx_src)
+    else:
+        for ctx_src in cfg.ctx_datatsets:
+            ctx_src = hydra.utils.instantiate(cfg.ctx_sources[ctx_src])
+            id_prefixes.append(ctx_src.id_prefix)
+            ctx_sources.append(ctx_src)
 
     logger.info("id_prefixes per dataset: %s", id_prefixes)
-
-    # index all passages
-    ctx_files_patterns = cfg.encoded_ctx_files
-    index_path = cfg.index_path
 
     logger.info("ctx_files_patterns: %s", ctx_files_patterns)
     if ctx_files_patterns:
@@ -410,8 +431,11 @@ def main(cfg: DictConfig):
 
     # get top k results
     all_passages = {}
+    i = 0
     for ctx_src in ctx_sources:
-        ctx_src.load_data_to(all_passages)
+        date = input_paths[i].split("/")[-1].split("_")[1]
+        ctx_src.load_data_to(all_passages, date)
+        i += 1
 
     if len(all_passages) == 0:
         raise RuntimeError(

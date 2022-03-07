@@ -15,12 +15,14 @@ import os
 import pathlib
 import pickle
 from typing import List, Tuple
+from tqdm import tqdm
 
 import hydra
 import numpy as np
 import torch
 from omegaconf import DictConfig, OmegaConf
 from torch import nn
+from datetime import datetime, timedelta
 
 from dpr.data.biencoder_data import BiEncoderPassage
 from dpr.models import init_biencoder_components
@@ -39,17 +41,17 @@ setup_logger(logger)
 
 
 def gen_ctx_vectors(
-    cfg: DictConfig,
-    ctx_rows: List[Tuple[object, BiEncoderPassage]],
-    model: nn.Module,
-    tensorizer: Tensorizer,
-    insert_title: bool = True,
+        cfg: DictConfig,
+        ctx_rows: List[Tuple[object, BiEncoderPassage]],
+        model: nn.Module,
+        tensorizer: Tensorizer,
+        insert_title: bool = True,
 ) -> List[Tuple[object, np.array]]:
     n = len(ctx_rows)
     bsz = cfg.batch_size
     total = 0
     results = []
-    for j, batch_start in enumerate(range(0, n, bsz)):
+    for j, batch_start in tqdm(enumerate(range(0, n, bsz))):
         batch = ctx_rows[batch_start : batch_start + bsz]
         batch_token_tensors = [
             tensorizer.text_to_tensor(
@@ -89,8 +91,8 @@ def gen_ctx_vectors(
                 [(ctx_ids[i], out[i].view(-1).numpy()) for i in range(out.size(0))]
             )
 
-        if total % 10 == 0:
-            logger.info("Encoded passages %d", total)
+        # if total % 10 == 0:
+        #     logger.info("Encoded passages %d", total)
     return results
 
 
@@ -138,34 +140,45 @@ def main(cfg: DictConfig):
     }
     model_to_load.load_state_dict(ctx_state)
 
-    logger.info("reading data source: %s", cfg.ctx_src)
+    #Iterate over dates
+    start = datetime.strptime(cfg.start_date, "%b-%d-%Y")
+    end = datetime.strptime(cfg.end_date, "%b-%d-%Y")
 
-    ctx_src = hydra.utils.instantiate(cfg.ctx_sources[cfg.ctx_src])
-    all_passages_dict = {}
-    ctx_src.load_data_to(all_passages_dict)
-    all_passages = [(k, v) for k, v in all_passages_dict.items()]
+    delta = end - start
+    for i in range(delta.days + 1):
+        day = start + timedelta(days=i)
+        day_str = day.strftime("%b-%d-%Y")
 
-    shard_size = math.ceil(len(all_passages) / cfg.num_shards)
-    start_idx = cfg.shard_id * shard_size
-    end_idx = start_idx + shard_size
+        logger.info("reading data source: %s", cfg.ctx_src)
 
-    logger.info(
-        "Producing encodings for passages range: %d to %d (out of total %d)",
-        start_idx,
-        end_idx,
-        len(all_passages),
-    )
-    shard_passages = all_passages[start_idx:end_idx]
+        ctx_src = hydra.utils.instantiate(cfg.ctx_sources[cfg.ctx_src])
+        all_passages_dict = {}
 
-    data = gen_ctx_vectors(cfg, shard_passages, encoder, tensorizer, cfg.title_embed)
+        ctx_src.load_data_to(all_passages_dict, day_str)
+        all_passages = [(k, v) for k, v in all_passages_dict.items()]
 
-    file = cfg.out_file + "_" + str(cfg.shard_id)
-    pathlib.Path(os.path.dirname(file)).mkdir(parents=True, exist_ok=True)
-    logger.info("Writing results to %s" % file)
-    with open(file, mode="wb") as f:
-        pickle.dump(data, f)
+        shard_size = math.ceil(len(all_passages) / cfg.num_shards)
+        start_idx = cfg.shard_id * shard_size
+        end_idx = start_idx + shard_size
 
-    logger.info("Total passages processed %d. Written to %s", len(data), file)
+        logger.info(
+            f"Producing encodings for {day_str} for passages range: %d to %d (out of total %d) in %d batches",
+            start_idx,
+            end_idx,
+            len(all_passages),
+            len(all_passages)/cfg.batch_size
+        )
+        shard_passages = all_passages[start_idx:end_idx]
+
+        data = gen_ctx_vectors(cfg, shard_passages, encoder, tensorizer, cfg.title_embed)
+
+        file = cfg.out_file + "_" + day_str + "_" + str(cfg.shard_id)
+        pathlib.Path(os.path.dirname(file)).mkdir(parents=True, exist_ok=True)
+        logger.info("Writing results to %s" % file)
+        with open(file, mode="wb") as f:
+            pickle.dump(data, f)
+
+        logger.info(f"Embedding finished for {day_str}. Total passages processed %d. Written to %s", len(data), file)
 
 
 if __name__ == "__main__":

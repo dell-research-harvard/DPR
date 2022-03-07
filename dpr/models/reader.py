@@ -48,7 +48,6 @@ class Reader(nn.Module):
         return start_logits.view(N, M, L), end_logits.view(N, M, L), relevance_logits.view(N, M)
 
     def _forward(self, input_ids, attention_mask):
-        # TODO: provide segment values
         sequence_output, _pooled_output, _hidden_states = self.encoder(input_ids, None, attention_mask)
         logits = self.qa_outputs(sequence_output)
         start_logits, end_logits = logits.split(1, dim=-1)

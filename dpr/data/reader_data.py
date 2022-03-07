@@ -172,7 +172,6 @@ class ExtractiveReaderDataset(torch.utils.data.Dataset):
 
         if self.run_preprocessing:
             serialized_files = _run_preprocessing(self.tensorizer)
-            # TODO: check if pytorch process group is initialized
             # torch.distributed.barrier()
         else:
             # torch.distributed.barrier()

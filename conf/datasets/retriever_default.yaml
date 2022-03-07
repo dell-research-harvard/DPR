@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: This example is about Franklin Delano Roosevelt, FDR.
+  question: The topic of this article is vaccine safety.
   answer: No answer by design.
   id: 0
