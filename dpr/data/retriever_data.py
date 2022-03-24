@@ -488,8 +488,7 @@ class NewspaperArchiveCtxSrc_heads_daily(RetrieverData):
 
     def load_data_to(self, ctxs: Dict[object, BiEncoderPassage], date):
 
-        # year = "_" + str(datetime.strptime(date, "%b-%d-%Y").year) + "_"
-        year = str(datetime.strptime(date, "%b-%d-%Y").year)
+        year = "_" + str(datetime.strptime(date, "%b-%d-%Y").year) + "_"
 
         tokenizer = BartTokenizerFast.from_pretrained("facebook/bart-base")
 
