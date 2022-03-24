@@ -26,8 +26,8 @@ newspaper_archive_heads:
 
 newspaper_archive_heads_daily:
   _target_: dpr.data.retriever_data.NewspaperArchiveCtxSrc_heads_daily
-  #path_pattern: /mnt/data02/retrieval/preprocess/rule_based_outputs/**/**/ocr_*
-  path_pattern: /mnt/data01/rule_based_outputs/**/**/ocr_*
+  path_pattern: /mnt/data02/retrieval/preprocess/rule_based_outputs/**/**/ocr_*
+  #path_pattern: /mnt/data01/rule_based_outputs/**/**/ocr_*
 
 mnli_dev:
   _target_: dpr.data.retriever_data.MnliJsonlCtxSrc
