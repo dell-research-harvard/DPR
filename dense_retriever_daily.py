@@ -432,6 +432,9 @@ def main(cfg: DictConfig):
     # get top k results
     all_passages = {}
     i = 0
+    ###
+    print(input_paths)
+    ###
     for ctx_src in ctx_sources:
         date = input_paths[i].split("/")[-1].split("_")[1]
         ctx_src.load_data_to(all_passages, date)
