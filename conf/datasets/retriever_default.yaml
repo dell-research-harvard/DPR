@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: This example is about protests.
+  question: This example is a political endorsement.
   answer: No answer by design.
   id: 0
