@@ -496,6 +496,7 @@ class NewspaperArchiveCtxSrc_heads_daily(RetrieverData):
         for file_path in tqdm(self.file_paths):
 
             if year in file_path:
+                print(file_path)
                 with open(file_path, 'rb') as f:
                     items = ijson.kvitems(f, '')
                     ocr_text_generators = []
