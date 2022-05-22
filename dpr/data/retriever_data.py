@@ -494,10 +494,8 @@ class NewspaperArchiveCtxSrc_heads_daily(RetrieverData):
 
         print(f"Creating bi-encoder dict for {date}...")
         for file_path in tqdm(self.file_paths):
-            print(file_path)
 
             if year in file_path:
-                print("Found")
                 with open(file_path, 'rb') as f:
                     items = ijson.kvitems(f, '')
                     ocr_text_generators = []
