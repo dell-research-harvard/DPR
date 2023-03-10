@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: This example is about anti-trust.
+  question: This example is about an election.
   answer: No answer by design.
   id: 0
