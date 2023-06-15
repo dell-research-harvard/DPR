@@ -26,6 +26,6 @@ trivia_dev:
 
 custom_test:
   _target_: dpr.data.retriever_data.CustomQASrc
-  question: This example is about space.
+  question: This example is about Watergate.
   answer: No answer by design.
   id: 0
